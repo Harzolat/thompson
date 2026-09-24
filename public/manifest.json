@@ -1,0 +1,21 @@
+{
+  "name": "Thompson Harzolat — Developer, Creator & Founder of PulseLab",
+  "short_name": "Thompson",
+  "description": "Building ideas into digital experiences. Portfolio of Thompson Harzolat and PulseLab.",
+  "start_url": ".",
+  "display": "minimal-ui",
+  "theme_color": "#fafaf8",
+  "background_color": "#fafaf8",
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

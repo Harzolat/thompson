@@ -1,0 +1,19 @@
+# Dependencies
+node_modules/
+
+# Production build output (regenerate with `npm run build`)
+dist/
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS / editor noise
+.DS_Store
+Thumbs.db
+.vscode/*
+!.vscode/extensions.json
+
+# Local env
+.env
+.env.local

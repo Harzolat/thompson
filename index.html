@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Thompson Harzolat — Developer, Creator & Founder of PulseLab</title>
+    <meta
+      name="description"
+      content="Thompson Harzolat designs and builds digital experiences, products and communities through code, creativity and experimentation. Founder of PulseLab."
+    />
+
+    <!-- Favicon + PWA -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.json" />
+
+    <!-- Theme + SEO -->
+    <meta name="theme-color" content="#fafaf8" />
+    <!-- IMPORTANT: replace thompsonharzolat.dev with the real production
+         domain after deploying, in og:url, og:image, twitter:image and
+         the canonical link below. -->
+    <link rel="canonical" href="https://thompsonharzolat.dev/" />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:site_name" content="Thompson Harzolat × PulseLab" />
+    <meta property="og:url" content="https://thompsonharzolat.dev/" />
+    <meta property="og:title" content="Thompson Harzolat — Developer, Creator & Founder of PulseLab" />
+    <meta
+      property="og:description"
+      content="Building ideas into digital experiences. Explore Thompson's work and PulseLab — a community where ideas, code and creativity become real things."
+    />
+    <meta property="og:image" content="https://thompsonharzolat.dev/og-image.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:type" content="image/png" />
+    <meta
+      property="og:image:alt"
+      content="Thompson Harzolat — Building ideas into digital experiences. Founder, Creator, Developer."
+    />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:creator" content="@Harzolat" />
+    <meta name="twitter:title" content="Thompson Harzolat — Developer, Creator & Founder of PulseLab" />
+    <meta
+      name="twitter:description"
+      content="Building ideas into digital experiences. Developer, creator and founder of PulseLab."
+    />
+    <meta name="twitter:image" content="https://thompsonharzolat.dev/og-image.png" />
+    <meta
+      name="twitter:image:alt"
+      content="Thompson Harzolat — Building ideas into digital experiences."
+    />
+    <script>
+      // Apply the saved theme before first paint (no light flash).
+      try {
+        if (localStorage.getItem('th-portfolio-theme') === 'dark') {
+          document.documentElement.dataset.theme = 'dark';
+          document
+            .querySelector('meta[name="theme-color"]')
+            .setAttribute('content', '#0d0d0c');
+        }
+      } catch (e) {}
+    </script>
+
+    <!-- Typography: Inter (clean, modern sans-serif) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>
