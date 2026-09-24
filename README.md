@@ -29,5 +29,5 @@ Replace the placeholder contact details in `src/data/site.js`:
 - `socials` URLs (currently generic homepages)
 - Sample projects in `src/data/projects.js` with real work
 
-After deploying, add the production URL to `index.html`
+Production URL is `https://harzolat.vercel.app/` (canonical + OG/Twitter tags point there).
 (`og:url`, `og:image`, canonical).
