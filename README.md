@@ -20,12 +20,13 @@ npm run lint     # static checks
 - Projects: `src/data/projects.js` (set `image` to a path in `public/` to show a screenshot, or keep `null` for the abstract placeholder)
 - Styles and design tokens: `src/index.css`
 - One component per section: `src/components/`
+- Routes: `/` (portfolio) and `/pulselab` (community) in `src/pages/`; section links use `Link to={{ pathname: '/', hash: '#id' }}` so the SPA never reloads (see `ScrollManager` in `src/App.jsx`)
 
 ## Before launch
 
 Replace the placeholder contact details in `src/data/site.js`:
 
-- `email` (`tomiwaazeez019@gmail.com`) and `public/resume.pdf` (real 3-page resume) are live
+- `email` (`t.harzolat019@gmail.com`) and `public/resume.pdf` (real 3-page resume) are live
 - `socials` URLs (currently generic homepages)
 - Sample projects in `src/data/projects.js` with real work
 

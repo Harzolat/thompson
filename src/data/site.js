@@ -5,17 +5,70 @@ export const site = {
   name: 'Thompson Harzolat',
   shortName: 'Thompson',
   roles: ['Founder', 'Creator', 'Developer'],
+  roleTitle: 'Full-Stack Frontend Developer & UI/UX Designer',
 
   // ---- Hero copy (edit the hero text here) ----
   tagline: 'Building ideas into digital experiences.',
   description:
     'I design and build digital experiences, products and communities through code, creativity and experimentation.',
   status: 'Available for full-time & freelance roles',
+  heroStats: [
+    { value: '4+', label: 'Years Experience' },
+    { value: '90+', label: 'Lighthouse Vitals Target' },
+    { value: '100%', label: 'Mobile Responsive & Accessible' },
+  ],
+
+  // Hero logo + label marquee (under the stats): what Thompson does plus
+  // the tools he actually uses — confirmed against the capabilities
+  // badges and his own stack. `icon` keys map to lucide icons in
+  // LogoMarquee.jsx; `src` files are monochrome svgs in
+  // public/images/logos/ (ink fill, inverted in the dark theme).
+  // Items with an `href` link out; the rest are plain text.
+  heroMarquee: [
+    { id: 'ai', label: 'AI Tools', icon: 'ai' },
+    {
+      id: 'react',
+      label: 'React',
+      src: '/images/logos/react.svg',
+      href: 'https://react.dev',
+    },
+    { id: 'automation', label: 'Automation', icon: 'automation' },
+    {
+      id: 'typescript',
+      label: 'TypeScript',
+      src: '/images/logos/typescript.svg',
+      href: 'https://www.typescriptlang.org',
+    },
+    { id: 'frontend', label: 'Frontend Development', icon: 'code' },
+    {
+      id: 'javascript',
+      label: 'JavaScript',
+      src: '/images/logos/javascript.svg',
+      href: 'https://developer.mozilla.org/en-US/docs/Web/JavaScript',
+    },
+    { id: 'design', label: 'UI/UX Design', icon: 'pen' },
+    {
+      id: 'nodejs',
+      label: 'Node.js',
+      src: '/images/logos/nodedotjs.svg',
+      href: 'https://nodejs.org',
+    },
+    { id: 'interactive', label: 'Interactive Experiences', icon: 'interactive' },
+    {
+      id: 'vite',
+      label: 'Vite',
+      src: '/images/logos/vite.svg',
+      href: 'https://vite.dev',
+    },
+  ],
 
   // ---- Hero scroll artwork (edit the card copy here) ----
   // Set visual.image to a path like '/images/hero-visual.jpg' (file in
   // public/) to show real artwork; null keeps the designed placeholder.
   hero: {
+    // Decorative line-art backdrop behind the intro stage (file in
+    // public/images/); null hides it and the plain background shows.
+    backdrop: '/images/hero-bg.jpg',
     visual: {
       sandbox: 'preview.pulse.lab',
       sandboxBadge: 'Interactive Sandbox',
@@ -77,8 +130,8 @@ export const site = {
       text: 'Structural Study',
       href: '#creative',
     },
-    // Point this at the future PulseLab page or community link when it exists.
-    cta: { label: 'Explore PulseLab', href: '#contact' },
+    // Points at the dedicated /pulselab route.
+    cta: { label: 'Explore PulseLab', href: '/pulselab' },
     pillars: [
       {
         name: 'Build',
@@ -267,7 +320,7 @@ export const site = {
   // Drop the finished file at public/resume.pdf — same filename keeps
   // every link working with no code changes.
   resume: { label: 'Resume', href: '/resume.pdf', fileName: 'Thompson-Harzolat-Resume.pdf' },
-  email: 'tomiwaazeez019@gmail.com',
+  email: 't.harzolat019@gmail.com',
   community: {
     name: 'PulseLab',
     statement: 'A community where ideas, code and creativity become real things.',
@@ -275,15 +328,17 @@ export const site = {
     logoAlt: 'PulseLab logo',
   },
   // icon keys map to Lucide icons in Navbar.jsx (icon-first pill tabs).
+  // The PulseLab entry is a route (not an anchor) and renders as a
+  // highlighted badge outside the tab pairs.
   nav: [
     { label: 'Home', href: '#top', icon: 'home' },
     { label: 'About', href: '#about', icon: 'about' },
-    { label: 'PulseLab', href: '#pulselab', icon: 'pulselab' },
     { label: 'Work', href: '#work', icon: 'work' },
     { label: 'Capabilities', href: '#skills', icon: 'capabilities' },
     { label: 'Journey', href: '#journey', icon: 'journey' },
     { label: 'Creative', href: '#creative', icon: 'creative' },
     { label: 'Contact', href: '#contact', icon: 'contact' },
+    { label: 'PulseLab', href: '/pulselab', icon: 'pulselab', route: true },
   ],
   socials: [
     { label: 'GitHub', href: 'https://github.com/Harzolat' },

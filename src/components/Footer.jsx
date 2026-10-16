@@ -1,7 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { motion, useReducedMotion, useScroll, useTransform } from 'motion/react';
-import { ArrowUp, Mail } from 'lucide-react';
+import { ArrowUp, Check, Copy, Mail } from 'lucide-react';
 import { site } from '../data/site.js';
+import copyText from '../utils/copyText.js';
 
 // Cinematic footer (concept reference: 21st.dev "Motion Footer").
 // Hand-ported: our tokens, Motion scroll values instead of GSAP
@@ -11,7 +13,8 @@ import { site } from '../data/site.js';
 // pills → ghost wordmark → bottom bar with back-to-top.
 
 // Small magnetic wrapper: pulls toward the cursor, eases back on leave.
-function Magnetic({ href, onClick, className, label, children, type }) {
+// Renders a router Link for `to`, a plain anchor for `href`.
+function Magnetic({ href, to, onClick, className, label, children, type }) {
   const ref = useRef(null);
   const frameRef = useRef(0);
   const [reducedMotion] = useState(
@@ -40,6 +43,21 @@ function Magnetic({ href, onClick, className, label, children, type }) {
     frameRef.current = requestAnimationFrame(() => {
       el.style.transform = 'translate3d(0px, 0px, 0)';
     });
+  }
+
+  if (to) {
+    return (
+      <Link
+        ref={ref}
+        to={to}
+        className={className}
+        aria-label={label || undefined}
+        onMouseMove={pull}
+        onMouseLeave={release}
+      >
+        {children}
+      </Link>
+    );
   }
 
   if (href) {
@@ -76,11 +94,42 @@ function Magnetic({ href, onClick, className, label, children, type }) {
   );
 }
 
+// Small copy-email pill: inline emerald feedback, no toast needed here.
+function CopyEmailButton({ copied, onCopy, label }) {
+  return (
+    <button
+      type="button"
+      className={`cine-pill cine-copy${copied ? ' is-copied' : ''}`}
+      onClick={onCopy}
+      aria-label={copied ? 'Email address copied' : label}
+    >
+      {copied ? (
+        <Check size={18} strokeWidth={2} aria-hidden="true" />
+      ) : (
+        <Copy size={18} strokeWidth={2} aria-hidden="true" />
+      )}
+      {copied ? 'Copied! ✓' : 'Copy email'}
+    </button>
+  );
+}
+
 function Footer() {
   const year = new Date().getFullYear();
   const footRef = useRef(null);
   const reduceMotion = useReducedMotion();
   const { footer, socials, email } = site;
+  // Footer copy feedback mirrors the contact button: inline, emerald, 2s.
+  const [copied, setCopied] = useState(false);
+  const copyTimer = useRef(0);
+
+  useEffect(() => () => window.clearTimeout(copyTimer.current), []);
+
+  async function copyFooterEmail() {
+    await copyText(email);
+    setCopied(true);
+    window.clearTimeout(copyTimer.current);
+    copyTimer.current = window.setTimeout(() => setCopied(false), 2000);
+  }
   // Floating shortcut appears once the hero is scrolled past.
   const [pastTop, setPastTop] = useState(false);
 
@@ -174,10 +223,15 @@ function Footer() {
             <Mail size={20} strokeWidth={1.8} aria-hidden="true" />
             {footer.emailCta}
           </Magnetic>
-          <Magnetic className="cine-pill cine-pill-lg" href="#pulselab">
+          <Magnetic className="cine-pill cine-pill-lg" to={site.pulseLab.cta.href}>
             {footer.pulselabCta}
             <span aria-hidden="true">→</span>
           </Magnetic>
+          <CopyEmailButton
+            copied={copied}
+            onCopy={copyFooterEmail}
+            label="Copy email address"
+          />
         </div>
 
         <div className="cine-secondary">

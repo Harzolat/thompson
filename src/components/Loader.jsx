@@ -44,7 +44,9 @@ function Loader({ onDone }) {
     <motion.div
       className="loader"
       aria-hidden="true"
-      exit={{ y: '-100%' }}
+      // Past -100%: the curved belly hangs ~150px below the panel and
+      // must fully clear the viewport before unmount, or its tip snaps.
+      exit={{ y: 'calc(-100% - 160px)' }}
       transition={{ duration: 0.8, ease: EASE }}
     >
       {/* name tapes — outlined watermark bands, static and low-contrast */}
@@ -61,7 +63,10 @@ function Loader({ onDone }) {
         </p>
       </div>
 
-      <div className="loader-inner">
+      <motion.div
+        className="loader-inner"
+        exit={{ scale: 0.95, opacity: 0, y: -40, transition: { duration: 0.4 } }}
+      >
         <p className="loader-brand">
           <span className="loader-dot" />
           {site.name.toUpperCase()}
@@ -72,7 +77,7 @@ function Loader({ onDone }) {
           </div>
           <span className="loader-pct">{count}%</span>
         </div>
-      </div>
+      </motion.div>
 
       {width > 0 && (
         <svg

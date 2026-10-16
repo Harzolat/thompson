@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { site } from '../data/site.js';
 import useGitHubStats from '../hooks/useGitHub.js';
 
@@ -100,9 +101,12 @@ function About() {
                 >
                   {about.actions.resumeLabel}
                 </a>
-                <a className="link-arrow" href={about.actions.stackHref}>
+                <Link
+                  className="link-arrow"
+                  to={{ pathname: '/', hash: about.actions.stackHref }}
+                >
                   {about.actions.stackLabel} <span aria-hidden="true">→</span>
-                </a>
+                </Link>
               </div>
 
               <ul className="about-metrics reveal-item">

@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Search } from 'lucide-react';
 import { site } from '../data/site.js';
 import copyText from '../utils/copyText.js';
@@ -19,19 +20,17 @@ function CommandPalette({ open, onClose }) {
   const inputRef = useRef(null);
   const itemRefs = useRef([]);
   const openerRef = useRef(null);
-  const [reducedMotion] = useState(
-    () => window.matchMedia('(prefers-reduced-motion: reduce)').matches,
-  );
 
+  const navigate = useNavigate();
   const groups = useMemo(() => {
-    function goTo(href) {
+    // Route items navigate directly; anchors route home first and the
+    // central ScrollManager performs the glide on location change.
+    function goTo(item) {
       return () => {
-        const el = document.querySelector(href);
-        if (el) {
-          el.scrollIntoView({
-            behavior: reducedMotion ? 'auto' : 'smooth',
-            block: 'start',
-          });
+        if (item.route) {
+          navigate(item.href);
+        } else {
+          navigate({ pathname: '/', hash: item.href });
         }
         onClose();
       };
@@ -59,8 +58,8 @@ function CommandPalette({ open, onClose }) {
         items: site.nav.map((item) => ({
           id: `nav-${item.href}`,
           label: item.label,
-          hint: item.href.replace('#', '§ '),
-          run: goTo(item.href),
+          hint: item.route ? 'page' : item.href.replace('#', '§ '),
+          run: goTo(item),
         })),
       },
       {
@@ -102,7 +101,7 @@ function CommandPalette({ open, onClose }) {
         })),
       },
     ];
-  }, [onClose, copyFlash, reducedMotion]);
+  }, [onClose, copyFlash, navigate]);
 
   const flat = useMemo(
     () =>

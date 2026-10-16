@@ -1,5 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
+import { Link } from 'react-router-dom';
+import { Copy } from 'lucide-react';
 import { site } from '../data/site.js';
+import copyText from '../utils/copyText.js';
+import LogoMarquee from './LogoMarquee.jsx';
 import HeroScrollVisual from './HeroScrollVisual.jsx';
 
 // PHASE 23 — Hero: centered editorial intro + scroll-reactive artwork.
@@ -14,15 +18,24 @@ import HeroScrollVisual from './HeroScrollVisual.jsx';
 
 const reduceMotionQuery = '(prefers-reduced-motion: reduce)';
 
-function Hero() {
+function Hero({ ready = true }) {
   const magnetRef = useRef(null);
   const frameRef = useRef(0);
   const [reducedMotion] = useState(
     () => window.matchMedia(reduceMotionQuery).matches,
   );
+  // Copy-email feedback: transient label only, reverts automatically.
+  const [copied, setCopied] = useState(false);
+  const copyTimer = useRef(0);
+  // Backdrop guard: a missing hero-bg file hides the img and the plain
+  // page background shows instead (see public/images/README.md).
+  const [bgFailed, setBgFailed] = useState(false);
 
   // Cancel any queued frame on unmount.
-  useEffect(() => () => cancelAnimationFrame(frameRef.current), []);
+  useEffect(() => () => {
+    cancelAnimationFrame(frameRef.current);
+    window.clearTimeout(copyTimer.current);
+  }, []);
 
   function handleMagnetMove(event) {
     if (reducedMotion) return;
@@ -46,72 +59,118 @@ function Hero() {
     });
   }
 
+  async function copySiteEmail() {
+    await copyText(site.email);
+    setCopied(true);
+    window.clearTimeout(copyTimer.current);
+    copyTimer.current = window.setTimeout(() => setCopied(false), 2000);
+  }
+
   return (
-    <section id="top" className="hero" aria-label="Introduction">
+    <section
+      id="top"
+      className={ready ? 'hero' : 'hero hero-waiting'}
+      aria-label="Introduction"
+    >
+      {/* Decorative line-art backdrop (hero.backdrop in site.js):
+          full-bleed behind the intro, artwork anchored right where the
+          copy isn't; a failed load hides it (plain background). */}
+      {site.hero.backdrop && !bgFailed ? (
+        <img
+          className="hero-backdrop"
+          src={site.hero.backdrop}
+          alt=""
+          aria-hidden="true"
+          loading="eager"
+          fetchpriority="high"
+          decoding="async"
+          onError={() => setBgFailed(true)}
+        />
+      ) : null}
       <div className="container hero-center">
-        {/* ---- Layer 1: editorial identity ---- */}
-        <p className="section-label hero-label rise" style={{ animationDelay: '0.05s' }}>
-          <span className="brand-dot" aria-hidden="true" />
-          {site.name} — {site.roles.join(' / ')}
-        </p>
+        {/* ---- Layer 1: full-viewport editorial intro ---- */}
+        <div className="hero-viewport">
+        <div className="hero-top">
+          <div className="hero-copy">
+            <p className="section-label hero-label rise" style={{ animationDelay: '0.05s' }}>
+              <span className="status-dot" aria-hidden="true" />
+              <span className="mono">Software Engineer & UI/UX Designer</span>
+            </p>
 
-        <h1 className="hero-title">
-          <span className="mask">
-            <span className="mask-inner" style={{ animationDelay: '0.15s' }}>
-              Building ideas
-            </span>
-          </span>
-          <span className="mask">
-            <span className="mask-inner" style={{ animationDelay: '0.27s' }}>
-              into digital
-            </span>
-          </span>
-          <span className="mask">
-            <span className="mask-inner" style={{ animationDelay: '0.39s' }}>
-              experiences<span className="accent-dot" aria-hidden="true">.</span>
-            </span>
-          </span>
-        </h1>
+            <h1 className="hero-title">
+              <span className="mask">
+                <span className="mask-inner" style={{ animationDelay: '0.15s' }}>
+                  Thompson
+                </span>
+              </span>
+              <span className="mask">
+                <span className="mask-inner" style={{ animationDelay: '0.27s' }}>
+                  Harzolat<span className="accent-dot" aria-hidden="true">.</span>
+                </span>
+              </span>
+            </h1>
 
-        <p className="hero-sub rise" style={{ animationDelay: '0.52s' }}>
-          {site.description}
-        </p>
+            <p className="hero-role rise" style={{ animationDelay: '0.39s' }}>
+              {site.roleTitle}
+            </p>
 
-        <p className="hero-meta rise" style={{ animationDelay: '0.6s' }}>
-          React.js · JavaScript · Founder of PulseLab
-        </p>
+            <p className="hero-sub rise" style={{ animationDelay: '0.5s' }}>
+              {site.description}
+            </p>
+          </div>
+        </div>
 
-        <div className="hero-ctas rise" style={{ animationDelay: '0.68s' }}>
-          <a
+        <div className="hero-ctas rise" style={{ animationDelay: '0.62s' }}>
+          <Link
             ref={magnetRef}
             className="btn-primary"
-            href="#work"
+            to={{ pathname: '/', hash: '#work' }}
             onMouseMove={handleMagnetMove}
             onMouseLeave={resetMagnet}
           >
-            Explore my work
-          </a>
-          <a className="link-arrow" href="#pulselab">
-            Enter PulseLab <span aria-hidden="true">→</span>
-          </a>
+            View Selected Work
+          </Link>
+          <button
+            className="btn-outline"
+            type="button"
+            onClick={copySiteEmail}
+            aria-label={copied ? 'Email address copied' : 'Copy email address'}
+          >
+            <Copy size={15} strokeWidth={2} aria-hidden="true" />
+            {copied ? 'Copied ✓' : site.email}
+          </button>
+          <Link className="link-arrow" to="/pulselab">
+            Explore PulseLab <span aria-hidden="true">→</span>
+          </Link>
         </div>
 
-        <p className="hero-status rise" style={{ animationDelay: '0.78s' }}>
-          <span className="status-dot" aria-hidden="true" />
+        <p className="hero-status rise" style={{ animationDelay: '0.72s' }}>
           {site.status}
         </p>
 
-        <a
-          className="scroll-cue rise"
-          style={{ animationDelay: '0.92s' }}
-          href="#about"
-          aria-label="Scroll down to the About section"
-        >
-          <span>Scroll</span>
-          <span className="cue-line" aria-hidden="true">
-            <span className="cue-dot" />
-          </span>
-        </a>
+        <ul className="hero-stats rise" style={{ animationDelay: '0.8s' }}>
+          {site.heroStats.map((stat) => (
+            <li
+              key={stat.label}
+              aria-label={`${stat.value} ${stat.label}`}
+            >
+              <span className="hero-stat-value" aria-hidden="true">
+                {stat.value}
+              </span>
+              <span className="hero-stat-label" aria-hidden="true">
+                {stat.label}
+              </span>
+            </li>
+          ))}
+        </ul>
+
+        {/* Mark + label strip: disciplines and tools from site.js
+            (heroMarquee); icons are lucide, logos live in
+            public/images/logos. */}
+        <div className="hero-marquee rise" style={{ animationDelay: '0.86s' }}>
+          <LogoMarquee items={site.heroMarquee} label="What I do and tools" />
+        </div>
+        </div>
 
         {/* ---- Layer 2: scroll-reactive artwork ---- */}
         <HeroScrollVisual />

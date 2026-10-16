@@ -1,4 +1,5 @@
 import { Suspense, lazy, useEffect, useRef, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { projects } from '../data/projects.js';
 import useGitHubStats from '../hooks/useGitHub.js';
 import {
@@ -411,9 +412,9 @@ function Projects() {
           <p className="work-more-text">
             More experiments on the way — still building.
           </p>
-          <a className="btn-accent" href="#contact">
+          <Link className="btn-accent" to={{ pathname: '/', hash: '#contact' }}>
             Have an idea? Start a project <span aria-hidden="true">→</span>
-          </a>
+          </Link>
         </div>
 
         {/* Floating preview: one fixed card, content swaps per row.

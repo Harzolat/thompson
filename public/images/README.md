@@ -16,6 +16,7 @@ components also fall back to the placeholder automatically via `onError`.
 | `hero-visual.jpg`  | Hero    | `hero.visual.image` in `site.js`      | Wide artwork, 4:3 (e.g. 1600×1200). Above the fold. |
 | `pulselab.jpg`     | PulseLab| Reserved community artwork            | Not consumed yet — the node visual stays primary.   |
 | `pulselab-logo.png`| Brand   | `community.logo` in `site.js`         | Transparent mark, used in navbar/PulseLab/footer. |
+| `logos/react.svg`, `logos/javascript.svg`, `logos/typescript.svg`, `logos/nodedotjs.svg`, `logos/vite.svg` | Hero | `heroMarquee` in `site.js` | Logo + label marquee strip. Monochrome marks (Simple Icons, ink `#0a0a0a` fill) — the dark theme inverts them via CSS. Discipline items (AI Tools, Automation...) use lucide icons instead of files. |
 | `project-1.jpg`    | Work    | `projects[0].image` in `projects.js`  | 16:10 (e.g. 1600×1000). Empty — Marywine uses the placeholder. |
 | `project-2.jpg`    | Work    | `projects[1].image` in `projects.js`  | Stayflow uses `stayflow.jpg` instead (see below).                     |
 | `project-3.jpg`    | Work    | `projects[2].image` in `projects.js`  | Marv Collection uses `marv-collection.jpg` instead (see below).       |
@@ -24,6 +25,7 @@ components also fall back to the placeholder automatically via `onError`.
 
 | File                   | Used by              | Notes                                              |
 | ---------------------- | -------------------- | -------------------------------------------------- |
+| `hero-bg.jpg`          | Hero backdrop        | Decorative line art behind the hero intro (`hero.backdrop` in `site.js`). Inverted in the dark theme, hidden ≤900px. |
 | `marv-collection.jpg`  | Marv Collection cover| Hero screenshot, wired as long banner in `projects.js`. |
 | `marv-collection-2..5` | Reserved gallery set | `-2` wired as the hover-box shot; rest unwired until gallery UI. |
 | `stayflow.jpg`         | Stayflow cover       | Hero screenshot, wired as long banner in `projects.js`. |

@@ -1,12 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
-import { Copy } from 'lucide-react';
+import { Check, Copy } from 'lucide-react';
 import { site } from '../data/site.js';
 import copyText from '../utils/copyText.js';
 
-// Contact: invitation + honest tools. The form has no backend, so it
-// composes a real email instead of pretending to send one: submit opens
-// the visitor's email client with everything prefilled, and the note
-// below the button says exactly that. No fake success states.
+// Contact: invitation + a real Formspree-backed form. Submit states are
+// honest because the backend confirms them: idle → submitting → success
+// (form resets) or error (message shown, draft preserved). The direct
+// email link + copy button remain as alternatives.
 
 const PROJECT_TYPES = [
   'Web Development',
@@ -20,11 +20,16 @@ function Contact() {
   const { contact, email, socials } = site;
   // Toast: { id, message, leaving } — fixed floating note, no layout shift.
   const [toast, setToast] = useState(null);
-  // Form status: idle → opening → idle. There is deliberately no "sent"
-  // state and no form reset: mailto can't confirm delivery, and clearing
-  // the fields would destroy the visitor's draft.
-  const [sending, setSending] = useState(false);
+  // Copy feedback is inline on the button (emerald, 2s); the floating
+  // toast stays reserved for form-submit confirmations.
+  const [copied, setCopied] = useState(false);
+  // Formspree submission lifecycle. Success resets the form (the server
+  // confirmed receipt); error preserves the draft and explains why.
+  const [status, setStatus] = useState('idle');
+  const [errorMessage, setErrorMessage] = useState('');
   const toastTimer = useRef(0);
+  const copyTimer = useRef(0);
+  const statusTimer = useRef(0);
 
   // Reveal once when the section enters the viewport.
   useEffect(() => {
@@ -49,6 +54,8 @@ function Contact() {
     return () => {
       observer.disconnect();
       window.clearTimeout(toastTimer.current);
+      window.clearTimeout(copyTimer.current);
+      window.clearTimeout(statusTimer.current);
     };
   }, []);
 
@@ -61,25 +68,50 @@ function Contact() {
     }, 2200);
   }
 
-  function sendViaEmail(event) {
+  async function handleSubmit(event) {
     event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    const name = String(data.get('name') || '').trim();
-    const from = String(data.get('email') || '').trim();
-    const type = String(data.get('type') || PROJECT_TYPES[0]);
-    const message = String(data.get('message') || '').trim();
-    const subject = `Portfolio inquiry — ${type} — ${name}`;
-    const body = `${message}\n\n— ${name} (${from})`;
-    window.location.href = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-    // Truthful feedback only: the client was triggered, not confirmed.
-    setSending(true);
-    showToast('Opening your email client with prefilled details…');
-    window.setTimeout(() => setSending(false), 2500);
+    setStatus('submitting');
+    setErrorMessage('');
+
+    const form = event.currentTarget;
+    const formData = new FormData(form);
+
+    try {
+      const response = await fetch('https://formspree.io/f/xdekyoge', {
+        method: 'POST',
+        body: formData,
+        headers: {
+          Accept: 'application/json',
+        },
+      });
+
+      if (response.ok) {
+        setStatus('success');
+        form.reset();
+        showToast('Message sent ✓ — I’ll get back to you soon.');
+        // Re-arm the button shortly after; the sent fields stay cleared.
+        window.clearTimeout(statusTimer.current);
+        statusTimer.current = window.setTimeout(() => setStatus('idle'), 4000);
+      } else {
+        const data = await response.json().catch(() => null);
+        setStatus('error');
+        setErrorMessage(
+          data?.errors?.[0]?.message || 'There was an issue sending your message. Please try again.',
+        );
+      }
+    } catch {
+      // The request itself failed (network/CORS/DNS) — nothing was
+      // delivered, so this stays an error, never a success.
+      setStatus('error');
+      setErrorMessage('Network error. Please check your connection and try again.');
+    }
   }
 
   async function copyEmail() {
     await copyText(email);
-    showToast('Email copied to clipboard ✓');
+    setCopied(true);
+    window.clearTimeout(copyTimer.current);
+    copyTimer.current = window.setTimeout(() => setCopied(false), 2000);
   }
 
   // Brand accent per network — dots only, rows stay monochrome.
@@ -107,7 +139,7 @@ function Contact() {
 
             <form
               className="contact-form reveal-item"
-              onSubmit={sendViaEmail}
+              onSubmit={handleSubmit}
               aria-label="Contact form"
             >
               <div className="form-row">
@@ -134,14 +166,30 @@ function Contact() {
                 Message
                 <textarea name="message" rows={4} required />
               </label>
-              <button className="btn-accent" type="submit" disabled={sending}>
-                {sending ? 'Opening…' : 'Send via email'}{' '}
+              <button
+                className="btn-accent"
+                type="submit"
+                disabled={status === 'submitting' || status === 'success'}
+              >
+                {status === 'submitting'
+                  ? 'Sending…'
+                  : status === 'success'
+                    ? 'Message sent ✓'
+                    : 'Send message'}{' '}
                 <span aria-hidden="true">→</span>
               </button>
-              <p className="form-note">
-                Opens your email client with everything prefilled — nothing is
-                stored or sent automatically.
-              </p>
+              {status === 'error' && (
+                <p className="form-error" role="alert">
+                  {errorMessage}{' '}
+                  <a href={`mailto:${email}`}>Email me directly instead</a>.
+                </p>
+              )}
+              {status !== 'error' && (
+                <p className="form-note">
+                  Sent directly — or{' '}
+                  <a href={`mailto:${email}`}>open your email client</a> instead.
+                </p>
+              )}
             </form>
 
             <div className="contact-direct reveal-item">
@@ -159,13 +207,17 @@ function Contact() {
                 </span>
               </a>
               <button
-                className="copy-btn"
+                className={`copy-btn${copied ? ' is-copied' : ''}`}
                 type="button"
                 onClick={copyEmail}
-                aria-label="Copy email address"
+                aria-label={copied ? 'Email address copied' : 'Copy email address'}
               >
-                <Copy size={16} strokeWidth={2} aria-hidden="true" />
-                Copy
+                {copied ? (
+                  <Check size={16} strokeWidth={2} aria-hidden="true" />
+                ) : (
+                  <Copy size={16} strokeWidth={2} aria-hidden="true" />
+                )}
+                {copied ? 'Copied! ✓' : 'Copy'}
               </button>
             </div>
 

@@ -19,6 +19,7 @@
   /* ONE PulseLab accent — used sparingly */
   --color-accent: #2447f5;
   --color-accent-soft: rgba(36, 71, 245, 0.08);
+  --color-accent-line: rgba(36, 71, 245, 0.22);
 
   /* Typography */
   --font-sans: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
@@ -39,6 +40,14 @@
 *::before,
 *::after {
   box-sizing: border-box;
+}
+
+/* View-transition takeover: the theme reveal is fully driven by WAAPI,
+   so the UA crossfade must stay out of the way. */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none !important;
+  mix-blend-mode: normal !important;
 }
 
 * {
@@ -178,6 +187,31 @@ img {
   /* floats above every section — only cursor (1000) and loader (2000)
      intentionally sit higher */
   z-index: 500;
+  /* blurred bar at all sizes so brand text never overlays page content */
+  background: rgba(250, 250, 248, 0.8);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--color-line);
+  transition:
+    opacity 0.6s ease,
+    transform 0.6s var(--ease);
+}
+
+[data-theme='dark'] .site-header {
+  background: rgba(13, 13, 12, 0.8);
+}
+
+/* pre-reveal state: fades/slides in as the loader lifts */
+.site-header.pre {
+  opacity: 0;
+  transform: translateY(-12px);
+}
+
+/* paused staged entrance: held behind the loader curtain, released
+   the moment it starts lifting */
+.hero-waiting .rise,
+.hero-waiting .mask-inner {
+  animation-play-state: paused;
 }
 
 .navbar {
@@ -213,43 +247,6 @@ img {
   transition:
     opacity 0.35s ease,
     transform 0.35s var(--ease);
-}
-
-/* Vanishes past the hero — space is preserved so the pill never jumps */
-.brand.is-hidden {
-  opacity: 0;
-  transform: translateX(-12px);
-  pointer-events: none;
-}
-
-/* Standing wordmark on the left viewport edge. Appears exactly as the
-   horizontal brand vanishes, so the identity is never fully gone. */
-.brand-rail {
-  position: fixed;
-  left: 18px;
-  top: 50%;
-  translate: 0 -50%;
-  writing-mode: vertical-rl;
-  rotate: 180deg;
-  z-index: 90;
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.32em;
-  text-transform: uppercase;
-  color: var(--color-muted);
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.4s ease;
-}
-
-.brand-rail.is-on {
-  opacity: 1;
-}
-
-@media (max-width: 900px) {
-  .brand-rail {
-    display: none;
-  }
 }
 
 .brand-dot {
@@ -711,6 +708,13 @@ img {
   color: #fff;
 }
 
+/* footer copy pill: emerald inline feedback, matching Contact */
+.cine-copy.is-copied,
+.cine-copy.is-copied:hover {
+  color: #10b981;
+  border-color: #10b981;
+}
+
 /* bottom bar */
 .cine-bar {
   position: relative;
@@ -802,18 +806,6 @@ img {
 
 /* Nav collapses at 900px: the pill no longer fits beside the brand below that. */
 @media (max-width: 900px) {
-  /* compact blurred bar so scrolled content never bleeds through */
-  .site-header {
-    background: rgba(250, 250, 248, 0.7);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border-bottom: 1px solid var(--color-line);
-  }
-
-  [data-theme='dark'] .site-header {
-    background: rgba(13, 13, 12, 0.7);
-  }
-
   .navbar {
     height: 56px;
   }
@@ -932,7 +924,9 @@ img {
    ============================================================ */
 
 .hero {
-  padding-block: clamp(56px, 8vw, 110px) clamp(64px, 9vw, 120px);
+  position: relative; /* stage for the decorative backdrop */
+  z-index: 0; /* stacking context: backdrop paints behind the copy */
+  padding-block: 24px clamp(64px, 9vw, 120px);
   /* clips the tilted card's perspective overflow so it never creates a
      horizontal scrollbar while settling flat */
   overflow: clip;
@@ -945,8 +939,86 @@ img {
   text-align: center;
 }
 
+/* Full-viewport intro: centers the identity block with the scroll cue
+   as its payoff; the artwork card flows naturally after. */
+.hero-viewport {
+  width: 100%;
+  min-height: calc(100vh - 76px);
+  min-height: calc(100svh - 76px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding-block: clamp(20px, 4vh, 44px);
+}
+
+@media (max-width: 900px) {
+  .hero-viewport {
+    min-height: calc(100vh - 56px);
+    min-height: calc(100svh - 56px);
+  }
+}
+
+/* Decorative line-art backdrop (site.js: hero.backdrop): covers the
+   intro stage full-bleed, artwork anchored right where the copy isn't.
+   Fades out at the bottom so it dissolves into the artwork card below;
+   the dark theme inverts the near-white art like the brand marks.
+   Hidden on small screens to keep the copy clean. */
+.hero-backdrop {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: -1;
+  width: 100%;
+  height: calc(100vh - 76px);
+  height: calc(100svh - 76px);
+  object-fit: cover;
+  object-position: right center;
+  pointer-events: none;
+  user-select: none;
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    #000 calc(100% - 120px),
+    transparent
+  );
+  mask-image: linear-gradient(to bottom, #000 calc(100% - 120px), transparent);
+}
+
+[data-theme='dark'] .hero-backdrop {
+  filter: invert(1);
+}
+
+@media (max-width: 900px) {
+  .hero-backdrop {
+    display: none;
+  }
+}
+
+/* Dual-column intro on desktop: copy left, artwork space right */
+.hero-top {
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  gap: clamp(32px, 5vw, 64px);
+  align-items: center;
+  width: 100%;
+  text-align: left;
+  margin-bottom: 8px;
+}
+
+.hero-copy {
+  min-width: 0;
+}
+
 .hero-label {
-  margin-bottom: 24px;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 28px;
+  font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+}
+
+.hero-label::before {
+  display: none;
 }
 
 /* Large editorial headline */
@@ -1003,11 +1075,171 @@ img {
   margin-bottom: 36px;
 }
 
+/* Role line under the name */
+.hero-role {
+  font-size: clamp(19px, 2.4vw, 26px);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  color: var(--color-ink);
+  margin-bottom: 20px;
+}
+
+/* Micro-stats bar: value over label, hairline rules */
+.hero-stats {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  width: 100%;
+  margin: 0 0 clamp(40px, 5vw, 64px);
+  padding: 22px 0;
+  border-top: 1px solid var(--color-line);
+  border-bottom: 1px solid var(--color-line);
+  text-align: left;
+}
+
+.hero-stat-value {
+  display: block;
+  font-size: clamp(24px, 3vw, 32px);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--color-ink);
+  font-variant-numeric: tabular-nums;
+  margin-bottom: 4px;
+}
+
+.hero-stat-label {
+  display: block;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+}
+
+/* Hero tech strip: Logo Marquee (21st.dev @ddoemonn, ported from
+   Tailwind/TS to plain CSS + JSX). Physics loop — pauses on hover and
+   focus, stops off-screen, static scrollable row under reduced motion.
+   The offset is painted with translate3d (no React work per frame). */
+.hero-marquee {
+  margin: 0 0 clamp(28px, 3.5vw, 48px);
+}
+
+.logo-marquee {
+  position: relative;
+  isolation: isolate;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
+}
+
+.lm-viewport {
+  overflow-y: hidden;
+  padding: 6px 0;
+  outline: none;
+}
+
+.lm-viewport:focus-visible {
+  background: var(--color-accent-soft);
+  box-shadow: inset 0 0 0 1px var(--color-accent);
+}
+
+/* The group is a real <ul>: reset the UA list styles — the default
+   disc markers draw a dot at every item's left edge (baseline-aligned,
+   i.e. below center) and the default 40px inline padding widens the
+   loop seam, making the rhythm uneven. */
+.lm-track,
+.lm-group {
+  display: flex;
+  align-items: center;
+  width: max-content;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.lm-item {
+  flex-shrink: 0;
+}
+
+.lm-face {
+  display: inline-flex;
+  align-items: center;
+  gap: 13px;
+  height: 44px;
+  white-space: nowrap;
+  color: var(--color-muted);
+  transition: color 150ms ease;
+}
+
+.lm-text {
+  font-size: 17px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+}
+
+.lm-icon {
+  display: inline-flex;
+  align-items: center;
+}
+
+.lm-hit {
+  text-decoration: none;
+}
+
+.lm-hit:hover,
+.lm-hit:focus-visible {
+  color: var(--color-ink);
+}
+
+.lm-hit:focus-visible {
+  outline: none;
+  background: var(--color-accent-soft);
+  box-shadow: inset 0 0 0 1px var(--color-accent);
+}
+
+.lm-mark {
+  display: block;
+  height: 24px;
+  width: auto;
+  opacity: 0.72;
+  transition: opacity 150ms ease;
+}
+
+.lm-hit:hover .lm-mark {
+  opacity: 1;
+}
+
+/* Marks are ink svgs; dark theme flips them like the navbar brand. */
+[data-theme='dark'] .lm-mark {
+  filter: invert(1);
+}
+
+/* Edge fades dissolve the loop seams into the page background. */
+.lm-fade {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 48px;
+  pointer-events: none;
+}
+
+.lm-fade-l {
+  left: 0;
+  background: linear-gradient(to right, var(--color-bg), transparent);
+}
+
+.lm-fade-r {
+  right: 0;
+  background: linear-gradient(to left, var(--color-bg), transparent);
+}
+
 .hero-ctas {
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 28px;
+  justify-content: flex-start;
+  gap: 24px;
   flex-wrap: wrap;
   margin-bottom: 30px;
 }
@@ -1201,81 +1433,21 @@ button.link-arrow {
   margin-bottom: 8px;
 }
 
-.hero-meta {
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--color-muted);
-  margin-bottom: 26px;
-}
-
-/* live availability badge — green pulse dot + status text */
-/* live availability badge — green pulse dot + status text */
+/* Availability chip: content-width, aligned with the hero's left column,
+   accent-tinted instead of the off-palette animated green dot */
 .hero-status {
+  align-self: flex-start;
   display: inline-flex;
   align-items: center;
-  gap: 10px;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 500;
+  line-height: 1.3;
   color: var(--color-ink);
-  border: 1px solid var(--color-line);
+  background: var(--color-accent-soft);
+  border: 1px solid var(--color-accent-line);
   border-radius: 999px;
-  background: var(--color-surface);
-  padding: 9px 18px;
-  margin-bottom: 34px;
-}
-
-/* scroll cue — small label with a dot travelling down a hairline */
-.scroll-cue {
-  display: inline-flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: clamp(48px, 6vw, 80px);
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: var(--color-muted);
-  transition: color 0.2s ease;
-}
-
-.scroll-cue:hover {
-  color: var(--color-ink);
-}
-
-.cue-line {
-  position: relative;
-  display: block;
-  width: 1px;
-  height: 44px;
-  background: var(--color-line);
-  overflow: hidden;
-}
-
-.cue-dot {
-  position: absolute;
-  left: 0;
-  top: -8px;
-  width: 1px;
-  height: 8px;
-  background: var(--color-accent);
-  animation: cue-drop 2.2s var(--ease) infinite;
-}
-
-@keyframes cue-drop {
-  0% {
-    top: -8px;
-    opacity: 0;
-  }
-  25% {
-    opacity: 1;
-  }
-  100% {
-    top: 44px;
-    opacity: 0;
-  }
+  padding: 10px 20px;
+  margin-bottom: clamp(30px, 4vh, 40px);
 }
 
 .status-dot {
@@ -1572,6 +1744,39 @@ button.link-arrow {
 }
 
 /* ---------- Hero responsive ---------- */
+@media (max-width: 900px) {
+  .hero-top {
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .hero-copy {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .hero-ctas {
+    justify-content: center;
+  }
+
+  /* stacked layout centers the availability chip under the copy */
+  .hero-status {
+    align-self: center;
+  }
+
+  .hero-stats {
+    text-align: center;
+  }
+
+  .hero-stats li {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+}
+
 @media (max-width: 600px) {
   .scroll-card {
     border-radius: 18px;
@@ -1591,7 +1796,7 @@ button.link-arrow {
 
 @media (max-width: 560px) {
   .hero {
-    padding-block: 44px 56px;
+    padding-block: 16px 56px;
   }
 
   .hero-title {
@@ -1680,7 +1885,7 @@ button.link-arrow {
   position: relative;
   background: var(--color-surface);
   border: 1px solid var(--color-line);
-  border-radius: 18px;
+  border-radius: 16px;
   padding: 20px 20px 22px;
   transition: transform 0.3s var(--ease);
 }
@@ -2327,7 +2532,7 @@ button.link-arrow {
   gap: clamp(20px, 3vw, 32px);
   background: var(--color-surface);
   border: 1px solid var(--color-line);
-  border-radius: 18px;
+  border-radius: 16px;
   padding: clamp(20px, 3vw, 28px);
   margin-bottom: clamp(48px, 6vw, 80px);
 }
@@ -2753,7 +2958,7 @@ button.link-arrow {
   position: relative;
   background: var(--color-surface);
   border: 1px solid #d9d9d4;
-  border-radius: 18px;
+  border-radius: 16px;
   padding: 4px 26px;
   box-shadow:
     inset 0 0 0 1px rgba(255, 255, 255, 0.65),
@@ -4255,7 +4460,7 @@ button.link-arrow {
 /* ---------- Availability index ---------- */
 .contact-side {
   border: 1px solid var(--color-line);
-  border-radius: 18px;
+  border-radius: 16px;
   background: var(--color-surface);
   padding: 26px 26px 30px;
 }
@@ -4586,6 +4791,7 @@ html {
   --color-muted: #9c9c96;
   --color-line: rgba(255, 255, 255, 0.1);
   --color-accent-soft: rgba(36, 71, 245, 0.22);
+  --color-accent-line: rgba(36, 71, 245, 0.4);
 }
 
 [data-theme='dark'] ::selection {
@@ -4744,6 +4950,29 @@ html {
   max-width: 52ch;
 }
 
+.form-note a {
+  color: #fff;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.4);
+}
+
+.form-error {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 500;
+  color: #ff8a8a;
+  max-width: 52ch;
+}
+
+.form-error a {
+  color: #fff;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.4);
+}
+
+.btn-accent:disabled {
+  opacity: 0.65;
+  cursor: wait;
+}
+
 .contact-form .btn-accent {
   border: 0;
   outline: none;
@@ -4787,6 +5016,13 @@ html {
 .copy-btn:hover {
   border-color: var(--color-accent);
   background: rgba(36, 71, 245, 0.14);
+}
+
+.copy-btn.is-copied,
+.copy-btn.is-copied:hover {
+  color: #10b981;
+  border-color: #10b981;
+  background: rgba(16, 185, 129, 0.1);
 }
 
 /* ---------- Social brand dots (rows stay monochrome) ---------- */
@@ -5022,6 +5258,13 @@ html {
 }
 
 .palette-input::placeholder {
+  color: varfamily: var(--font-sans);
+  font-size: 16px;
+  color: var(--color-ink);
+  outline: none;
+}
+
+.palette-input::placeholder {
   color: var(--color-muted);
 }
 
@@ -5105,6 +5348,99 @@ html {
   }
 
   .palette-foot span:first-child {
+    display: none;
+  }
+}
+
+/* ============================================================
+   24. ROUTES — PulseLab page, bridge CTA, route badge
+   Same tokens, no new visual language.
+   ============================================================ */
+
+/* Highlighted PulseLab route badge at the end of the pill */
+.pill-tab.is-route {
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+  color: #fff;
+}
+
+.pill-tab.is-route:hover {
+  background: var(--color-accent);
+  color: #fff;
+  filter: brightness(1.08);
+}
+
+.pill-tab.is-route .pill-dot {
+  background: #fff;
+}
+
+/* Back link at the top of the PulseLab page */
+.back-link {
+  display: inline-block;
+  margin-top: 32px;
+}
+
+/* Bridge card between Work and Capabilities on the home page */
+.pulse-cta {
+  padding-block: 0;
+}
+
+.pulse-cta-card {
+  position: relative;
+  overflow: hidden;
+  background: var(--color-charcoal);
+  border: 1px solid var(--color-line);
+  border-radius: 22px;
+  padding: clamp(32px, 5vw, 64px);
+}
+
+.pulse-cta-card::after {
+  content: '';
+  position: absolute;
+  width: 120px;
+  height: 120px;
+  right: -44px;
+  top: -44px;
+  background: var(--color-accent);
+  border-radius: 24px;
+}
+
+.pulse-cta-card .section-label {
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.pulse-cta-card .section-label::before {
+  background: var(--color-accent);
+}
+
+.pulse-cta-title {
+  font-size: clamp(32px, 4.6vw, 60px);
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  color: #fff;
+  max-width: 16ch;
+  margin-bottom: 18px;
+}
+
+.pulse-cta-sub {
+  color: rgba(255, 255, 255, 0.72);
+  max-width: 52ch;
+  margin-bottom: 32px;
+}
+
+.pulse-cta-mark {
+  position: absolute;
+  right: clamp(20px, 4vw, 44px);
+  bottom: 18px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.35);
+}
+
+@media (max-width: 560px) {
+  .pulse-cta-mark {
     display: none;
   }
 }
