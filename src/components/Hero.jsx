@@ -77,16 +77,12 @@ function Hero({ ready = true }) {
         <div className="hero-viewport">
         <div className="hero-top">
           <div className="hero-copy">
-            <p className="section-label hero-label rise" style={{ animationDelay: '0.05s' }}>
-              <span className="status-dot" aria-hidden="true" />
-              <span className="mono">Software Engineer & UI/UX Designer</span>
-            </p>
-
             {/* Handwritten greeting — decorative; the accessible name
-                stays the headline alone. */}
+                stays the headline alone. First element in the copy
+                stack, so it carries the earliest entrance delay. */}
             <span
               className="hero-greeting rise"
-              style={{ animationDelay: '0.12s' }}
+              style={{ animationDelay: '0.05s' }}
               aria-hidden="true"
             >
               hey, I’m
