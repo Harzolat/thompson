@@ -25,6 +25,7 @@ components also fall back to the placeholder automatically via `onError`.
 
 | File                   | Used by              | Notes                                              |
 | ---------------------- | -------------------- | -------------------------------------------------- |
+| `portrait.jpg`         | Hero portrait        | His real photo, wired as `hero.portrait` in `site.js`. B&W, hairline-framed, eager-loaded. |
 | `marv-collection.jpg`  | Marv Collection cover| Hero screenshot, wired as long banner in `projects.js`. |
 | `marv-collection-2..5` | Reserved gallery set | `-2` wired as the hover-box shot; rest unwired until gallery UI. |
 | `stayflow.jpg`         | Stayflow cover       | Hero screenshot, wired as long banner in `projects.js`. |

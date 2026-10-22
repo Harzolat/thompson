@@ -956,7 +956,7 @@ img {
   }
 }
 
-/* Dual-column intro on desktop: copy left, breathing space right */
+/* Dual-column intro on desktop: copy left, portrait right */
 .hero-top {
   display: grid;
   grid-template-columns: 1.15fr 0.85fr;
@@ -965,6 +965,25 @@ img {
   width: 100%;
   text-align: left;
   margin-bottom: 8px;
+}
+
+/* Portrait: his real photo (site.js hero.portrait). Right column on
+   desktop, flush with the content edge so it lines up with the stats
+   row below; stacks above the copy on small screens. Hairline frame
+   plus the site's photo shadow; the hairline token flips in dark. */
+.hero-portrait {
+  justify-self: end;
+  width: clamp(240px, 24vw, 340px);
+}
+
+.hero-portrait img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+  border-radius: clamp(12px, 1.4vw, 20px);
+  border: 1px solid var(--color-line);
+  box-shadow: 0 24px 60px rgba(10, 10, 10, 0.18);
 }
 
 .hero-copy {
@@ -1717,6 +1736,13 @@ button.link-arrow {
     display: flex;
     flex-direction: column;
     align-items: center;
+  }
+
+  .hero-portrait {
+    order: -1;
+    align-self: center;
+    width: min(56vw, 220px);
+    margin-bottom: 8px;
   }
 
   .hero-ctas {

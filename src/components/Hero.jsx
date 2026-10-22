@@ -27,6 +27,9 @@ function Hero({ ready = true }) {
   // Copy-email feedback: transient label only, reverts automatically.
   const [copied, setCopied] = useState(false);
   const copyTimer = useRef(0);
+  // Portrait guard: a missing file hides the slot instead of showing a
+  // broken image (see public/images/README.md).
+  const [portraitFailed, setPortraitFailed] = useState(false);
 
   // Cancel any queued frame on unmount.
   useEffect(() => () => {
@@ -100,6 +103,25 @@ function Hero({ ready = true }) {
               {site.description}
             </p>
           </div>
+
+          {/* Portrait: his real photo (hero.portrait in site.js), framed
+              with the hairline token and the site's photo shadow; a
+              failed load hides the slot, leaving the clean layout. */}
+          {site.hero.portrait?.src && !portraitFailed ? (
+            <div
+              className="hero-portrait rise"
+              style={{ animationDelay: '0.3s' }}
+            >
+              <img
+                src={site.hero.portrait.src}
+                alt={site.hero.portrait.alt}
+                loading="eager"
+                fetchpriority="high"
+                decoding="async"
+                onError={() => setPortraitFailed(true)}
+              />
+            </div>
+          ) : null}
         </div>
 
         <div className="hero-ctas rise" style={{ animationDelay: '0.62s' }}>

@@ -66,6 +66,11 @@ export const site = {
   // Set visual.image to a path like '/images/hero-visual.jpg' (file in
   // public/) to show real artwork; null keeps the designed placeholder.
   hero: {
+    // His real photo (file in public/images/); null hides the slot.
+    portrait: {
+      src: '/images/portrait.jpg',
+      alt: 'Portrait of Thompson Harzolat',
+    },
     visual: {
       sandbox: 'preview.pulse.lab',
       sandboxBadge: 'Interactive Sandbox',
