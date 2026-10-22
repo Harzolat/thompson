@@ -66,9 +66,6 @@ export const site = {
   // Set visual.image to a path like '/images/hero-visual.jpg' (file in
   // public/) to show real artwork; null keeps the designed placeholder.
   hero: {
-    // Decorative line-art backdrop behind the intro stage (file in
-    // public/images/); null hides it and the plain background shows.
-    backdrop: '/images/hero-bg.jpg',
     visual: {
       sandbox: 'preview.pulse.lab',
       sandboxBadge: 'Interactive Sandbox',

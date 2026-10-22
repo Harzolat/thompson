@@ -924,8 +924,6 @@ img {
    ============================================================ */
 
 .hero {
-  position: relative; /* stage for the decorative backdrop */
-  z-index: 0; /* stacking context: backdrop paints behind the copy */
   padding-block: 24px clamp(64px, 9vw, 120px);
   /* clips the tilted card's perspective overflow so it never creates a
      horizontal scrollbar while settling flat */
@@ -958,43 +956,7 @@ img {
   }
 }
 
-/* Decorative line-art backdrop (site.js: hero.backdrop): covers the
-   intro stage full-bleed, artwork anchored right where the copy isn't.
-   Fades out at the bottom so it dissolves into the artwork card below;
-   the dark theme inverts the near-white art like the brand marks.
-   Hidden on small screens to keep the copy clean. */
-.hero-backdrop {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: -1;
-  width: 100%;
-  height: calc(100vh - 76px);
-  height: calc(100svh - 76px);
-  object-fit: cover;
-  object-position: right center;
-  pointer-events: none;
-  user-select: none;
-  -webkit-mask-image: linear-gradient(
-    to bottom,
-    #000 calc(100% - 120px),
-    transparent
-  );
-  mask-image: linear-gradient(to bottom, #000 calc(100% - 120px), transparent);
-}
-
-[data-theme='dark'] .hero-backdrop {
-  filter: invert(1);
-}
-
-@media (max-width: 900px) {
-  .hero-backdrop {
-    display: none;
-  }
-}
-
-/* Dual-column intro on desktop: copy left, artwork space right */
+/* Dual-column intro on desktop: copy left, breathing space right */
 .hero-top {
   display: grid;
   grid-template-columns: 1.15fr 0.85fr;

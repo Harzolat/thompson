@@ -27,9 +27,6 @@ function Hero({ ready = true }) {
   // Copy-email feedback: transient label only, reverts automatically.
   const [copied, setCopied] = useState(false);
   const copyTimer = useRef(0);
-  // Backdrop guard: a missing hero-bg file hides the img and the plain
-  // page background shows instead (see public/images/README.md).
-  const [bgFailed, setBgFailed] = useState(false);
 
   // Cancel any queued frame on unmount.
   useEffect(() => () => {
@@ -72,21 +69,6 @@ function Hero({ ready = true }) {
       className={ready ? 'hero' : 'hero hero-waiting'}
       aria-label="Introduction"
     >
-      {/* Decorative line-art backdrop (hero.backdrop in site.js):
-          full-bleed behind the intro, artwork anchored right where the
-          copy isn't; a failed load hides it (plain background). */}
-      {site.hero.backdrop && !bgFailed ? (
-        <img
-          className="hero-backdrop"
-          src={site.hero.backdrop}
-          alt=""
-          aria-hidden="true"
-          loading="eager"
-          fetchpriority="high"
-          decoding="async"
-          onError={() => setBgFailed(true)}
-        />
-      ) : null}
       <div className="container hero-center">
         {/* ---- Layer 1: full-viewport editorial intro ---- */}
         <div className="hero-viewport">

@@ -25,7 +25,6 @@ components also fall back to the placeholder automatically via `onError`.
 
 | File                   | Used by              | Notes                                              |
 | ---------------------- | -------------------- | -------------------------------------------------- |
-| `hero-bg.jpg`          | Hero backdrop        | Decorative line art behind the hero intro (`hero.backdrop` in `site.js`). Inverted in the dark theme, hidden ≤900px. |
 | `marv-collection.jpg`  | Marv Collection cover| Hero screenshot, wired as long banner in `projects.js`. |
 | `marv-collection-2..5` | Reserved gallery set | `-2` wired as the hover-box shot; rest unwired until gallery UI. |
 | `stayflow.jpg`         | Stayflow cover       | Hero screenshot, wired as long banner in `projects.js`. |
