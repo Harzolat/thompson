@@ -71,10 +71,14 @@
 }
 
 /* Handwritten greeting above the hero name (aria-hidden decoration;
-   ink-colored so the mobile hero's token flip keeps it readable). */
+   ink-colored so the mobile hero's token flip keeps it readable).
+   Block-level so it always sits on its own line below the eyebrow —
+   the label is an inline-flex, so an inline greeting would share
+   its line. Negative top margin pulls it into the label's gap. */
 .hero-greeting {
-  display: inline-block;
-  margin-bottom: 4px;
+  display: block;
+  width: fit-content;
+  margin: -10px 0 4px;
   font-family: var(--font-script);
   font-size: clamp(26px, 3vw, 34px);
   font-weight: 600;
