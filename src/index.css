@@ -1776,6 +1776,13 @@ button.link-arrow {
 
 /* ---------- Hero responsive ---------- */
 @media (max-width: 900px) {
+  /* Stage for the portrait background layer: the stacking context
+     lets the cutout sit behind the copy at z-index -1. */
+  .hero-viewport {
+    position: relative;
+    z-index: 0;
+  }
+
   .hero-top {
     display: flex;
     flex-direction: column;
@@ -1788,11 +1795,30 @@ button.link-arrow {
     align-items: center;
   }
 
+  /* Portrait becomes the hero background: the cutout bleeds off the
+     right edge behind the copy. Opacity lives on the img, not the
+     wrapper, because .rise fills its own opacity at 1. Dimmed on
+     light so small text over the suit keeps AA contrast; nearly full
+     strength on dark, where light text clears it anyway. */
   .hero-portrait {
-    order: -1;
-    align-self: center;
-    width: min(58vw, 240px);
-    margin-bottom: 8px;
+    position: absolute;
+    top: auto;
+    right: -8vw;
+    bottom: 0;
+    left: auto;
+    z-index: -1;
+    justify-self: auto;
+    align-self: auto;
+    width: min(92vw, 440px);
+    margin-bottom: 0;
+  }
+
+  .hero-portrait img {
+    opacity: 0.5;
+  }
+
+  [data-theme='dark'] .hero-portrait img {
+    opacity: 0.92;
   }
 
   .hero-ctas {
