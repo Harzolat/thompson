@@ -104,9 +104,11 @@ function Hero({ ready = true }) {
             </p>
           </div>
 
-          {/* Portrait: his cutout photo (hero.portrait in site.js),
-              backed by a soft breathing glow and fading into the page
-              at the bottom; a failed load hides the slot. */}
+          {/* Portrait: his cutout photo (hero.portrait in site.js).
+              Desktop: stands on the page with a breathing glow, torso
+              fading at the bottom. Mobile: fills the stage as the
+              hero backdrop behind a dark scrim. A failed load hides
+              the slot. */}
           {site.hero.portrait?.src && !portraitFailed ? (
             <div
               className="hero-portrait rise"
