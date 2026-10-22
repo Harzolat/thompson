@@ -13,7 +13,7 @@ export const site = {
     'I design and build digital experiences, products and communities through code, creativity and experimentation.',
   status: 'Available for full-time & freelance roles',
   heroStats: [
-    { value: '4+', label: 'Years Experience' },
+    { value: '5+', label: 'Years Experience' },
     { value: '90+', label: 'Lighthouse Vitals Target' },
     { value: '100%', label: 'Mobile Responsive & Accessible' },
   ],
