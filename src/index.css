@@ -1854,7 +1854,9 @@ button.link-arrow {
   .hero-viewport {
     position: relative;
     z-index: 0;
-    overflow: hidden;
+    /* the portrait bleeds past the container gutter to the screen
+       edges — .hero's overflow: clip is the outer guard */
+    overflow: visible;
     /* same remap dark theme uses — see section 19 */
     --color-bg: #0c0c0b; /* keeps the marquee edge fades dark on the panel */
     --color-ink: #f5f5f2;
@@ -1879,25 +1881,35 @@ button.link-arrow {
     align-items: center;
   }
 
-  /* Backdrop: the cutout fills the stage edge to edge. The -24px top
-     keeps the panel seamless while .rise slides it up into place; the
-     opaque base stops the page background bleeding through the
-     cutout's transparent regions under the scrim. */
+  /* Backdrop: the cutout panel fills the whole first screen with no
+     margin — the horizontal calc(50% - 50vw) stretches it past the
+     container gutter to both screen edges, and the -24px top reaches
+     the section edge (clipped by .hero's overflow: clip) so the panel
+     sits flush under the navbar. The opaque base stops the page
+     background bleeding through the cutout's transparent regions
+     under the scrim; overflow: hidden clips the breathing zoom. */
   .hero-portrait {
     position: absolute;
-    inset: -24px 0 0 0;
+    inset: -24px calc(50% - 50vw) 0;
     z-index: -1;
     justify-self: auto;
     align-self: auto;
     width: auto;
     background: #0d0d0f;
+    overflow: hidden;
   }
 
+  /* Contain, not cover: the whole figure stays visible at a smaller,
+     proportional scale instead of being upscaled to fill and crop.
+     The side padding keeps the shoulders off the screen edges, and
+     the top anchoring puts the face in the lightest part of the
+     scrim; the letterboxed stage shows the dark base + scrim. */
   .hero-portrait img {
     width: 100%;
     height: 100%;
-    object-fit: cover;
-    object-position: 50% 10%;
+    padding-inline: 7%;
+    object-fit: contain;
+    object-position: 50% 15%;
     animation: portrait-zoom 14s ease-in-out infinite;
     -webkit-mask-image: none;
     mask-image: none;
