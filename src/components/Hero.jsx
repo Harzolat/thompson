@@ -82,6 +82,16 @@ function Hero({ ready = true }) {
               <span className="mono">Software Engineer & UI/UX Designer</span>
             </p>
 
+            {/* Handwritten greeting — decorative; the accessible name
+                stays the headline alone. */}
+            <span
+              className="hero-greeting rise"
+              style={{ animationDelay: '0.12s' }}
+              aria-hidden="true"
+            >
+              hey, I’m
+            </span>
+
             <h1 className="hero-title">
               <span className="mask">
                 <span className="mask-inner" style={{ animationDelay: '0.15s' }}>

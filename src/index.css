@@ -21,8 +21,13 @@
   --color-accent-soft: rgba(36, 71, 245, 0.08);
   --color-accent-line: rgba(36, 71, 245, 0.22);
 
-  /* Typography */
+  /* Typography — every family has one job:
+     display = headings and display text, sans = body + interface,
+     script = the handwritten accents, mono = technical detail. */
+  --font-display: 'Space Grotesk', var(--font-sans);
   --font-sans: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  --font-script: 'Caveat', 'Segoe Script', 'Bradley Hand', cursive;
 
   /* Layout */
   --max-width: 1160px;
@@ -33,6 +38,65 @@
   /* Motion (used from Phase 2 onward) */
   --ease: cubic-bezier(0.22, 1, 0.36, 1);
   --duration: 0.5s;
+}
+
+/* ---------- 1b. Typography assignments ----------
+   h1–h3 take the display family directly; the classes below carry the
+   same display voice without being headings (spans, paragraphs and
+   artwork type). Metadata labels that don't already use .mono take
+   the technical family. Cursive is an accent only — three places:
+   the hero greeting, the About statement's highlighted words, and
+   the contact sign-off. */
+.hero-stat-value,
+.metric-value,
+.cover-year,
+.work-abstract-num,
+.cine-giant,
+.cine-headline,
+.loader-tape,
+.work-row-title,
+.milestone-title {
+  font-family: var(--font-display);
+}
+
+.work-num,
+.work-count,
+.work-meta dt,
+.work-row-meta,
+.milestone-period,
+.skill-index,
+.cover-study,
+.work-abstract-cat {
+  font-family: var(--font-mono);
+}
+
+/* Handwritten greeting above the hero name (aria-hidden decoration;
+   ink-colored so the mobile hero's token flip keeps it readable). */
+.hero-greeting {
+  display: inline-block;
+  margin-bottom: 4px;
+  font-family: var(--font-script);
+  font-size: clamp(26px, 3vw, 34px);
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: 0;
+  color: var(--color-ink);
+  rotate: -2.5deg;
+  transform-origin: left center;
+}
+
+/* Handwritten sign-off closing the contact panel (always charcoal). */
+.contact-signoff {
+  display: block;
+  margin-top: clamp(28px, 3.5vw, 40px);
+  font-family: var(--font-script);
+  font-size: clamp(26px, 2.8vw, 32px);
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: 0;
+  color: rgba(255, 255, 255, 0.85);
+  rotate: -1.5deg;
+  transform-origin: left center;
 }
 
 /* ---------- 2. Reset + base ---------- */
@@ -76,6 +140,7 @@ body {
 h1,
 h2,
 h3 {
+  font-family: var(--font-display);
   color: var(--color-ink);
   line-height: 1.08;
   letter-spacing: -0.03em;
@@ -457,7 +522,7 @@ img {
 }
 
 .palette-kbd {
-  font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  font-family: var(--font-mono);
   font-size: 11px;
   color: var(--color-muted);
   border: 1px solid var(--color-line);
@@ -1058,7 +1123,7 @@ img {
   align-items: center;
   gap: 10px;
   margin-bottom: 28px;
-  font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  font-family: var(--font-mono);
 }
 
 .hero-label::before {
@@ -1564,7 +1629,7 @@ button.link-arrow {
 }
 
 .mono {
-  font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  font-family: var(--font-mono);
 }
 
 /* ambient glows — static, low opacity, decorative */
@@ -1626,7 +1691,7 @@ button.link-arrow {
   display: inline-flex;
   align-items: center;
   gap: 7px;
-  font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  font-family: var(--font-mono);
   font-size: 11px;
   color: rgba(255, 255, 255, 0.75);
   border: 1px solid rgba(36, 71, 245, 0.35);
@@ -1715,7 +1780,7 @@ button.link-arrow {
 }
 
 .canvas-badge {
-  font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  font-family: var(--font-mono);
   font-size: 11px;
   letter-spacing: 0.06em;
   color: rgba(255, 255, 255, 0.75);
@@ -1762,7 +1827,7 @@ button.link-arrow {
 }
 
 .canvas-foot-tag {
-  font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  font-family: var(--font-mono);
   font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.18em;
@@ -1970,8 +2035,15 @@ button.link-arrow {
   margin-bottom: clamp(28px, 4vw, 48px);
 }
 
-/* Accent underline that draws itself when the section appears */
+/* The statement's highlighted words: the site's handwritten accent.
+   Caveat runs small on the em, so it sits at 1.15em to match the
+   surrounding display type optically; the underline draw is kept. */
 .statement-accent {
+  font-family: var(--font-script);
+  font-weight: 600;
+  font-size: 1.15em;
+  line-height: 1;
+  letter-spacing: 0;
   background-image: linear-gradient(var(--color-accent), var(--color-accent));
   background-size: 0% 2px;
   background-repeat: no-repeat;
@@ -2115,7 +2187,7 @@ button.link-arrow {
 }
 
 .id-badges li {
-  font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  font-family: var(--font-mono);
   font-size: 11px;
   letter-spacing: 0.04em;
   color: rgba(255, 255, 255, 0.85);
@@ -2370,7 +2442,7 @@ button.link-arrow {
   border-radius: 14px;
   padding: 16px 20px;
   margin-bottom: 24px;
-  font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  font-family: var(--font-mono);
   font-size: 13px;
 }
 
@@ -2668,7 +2740,7 @@ button.link-arrow {
   background: var(--color-charcoal);
   border-radius: 12px;
   padding: 18px 20px;
-  font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  font-family: var(--font-mono);
   font-size: 13px;
   line-height: 1.75;
   color: #fff;
@@ -3014,7 +3086,7 @@ button.link-arrow {
   padding: 0;
   display: grid;
   gap: 8px;
-  font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  font-family: var(--font-mono);
   font-size: 13px;
   color: var(--color-gray);
 }
@@ -3027,7 +3099,7 @@ button.link-arrow {
 
 .work-highlights span {
   color: var(--color-accent);
-  font-weight: 700;
+  font-weight: 600;
 }
 
 /* Dual project actions (rendered only when destinations exist) */
@@ -3640,7 +3712,7 @@ button.link-arrow {
 }
 
 .skill-badges li {
-  font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  font-family: var(--font-mono);
   font-size: 12px;
   color: var(--color-gray);
   border: 1px solid var(--color-line);
@@ -3891,7 +3963,7 @@ button.link-arrow {
 }
 
 .milestone-date {
-  font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  font-family: var(--font-mono);
   font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.06em;
@@ -5300,7 +5372,7 @@ html {
   max-width: 100%;
   overflow-wrap: anywhere;
   margin-top: 28px;
-  font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  font-family: var(--font-mono);
   font-size: 13px;
   color: var(--color-gray);
 }
@@ -5309,7 +5381,7 @@ html {
 .work-live {
   display: inline-block;
   margin: 0 0 28px;
-  font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  font-family: var(--font-mono);
   font-size: 13px;
   color: var(--color-gray);
 }
@@ -5434,7 +5506,7 @@ html {
 .palette-hint {
   margin-left: auto;
   flex-shrink: 0;
-  font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  font-family: var(--font-mono);
   font-size: 12px;
   color: var(--color-muted);
 }

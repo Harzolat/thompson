@@ -238,6 +238,9 @@ function Contact() {
                 </li>
               ))}
             </ul>
+
+            {/* Handwritten sign-off closing the panel */}
+            <p className="contact-signoff reveal-item">— Thompson</p>
           </div>
 
           {/* Side — availability index (informational, not interactive) */}
