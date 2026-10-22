@@ -104,9 +104,9 @@ function Hero({ ready = true }) {
             </p>
           </div>
 
-          {/* Portrait: his real photo (hero.portrait in site.js), framed
-              with the hairline token and the site's photo shadow; a
-              failed load hides the slot, leaving the clean layout. */}
+          {/* Portrait: his cutout photo (hero.portrait in site.js),
+              backed by a soft breathing glow and fading into the page
+              at the bottom; a failed load hides the slot. */}
           {site.hero.portrait?.src && !portraitFailed ? (
             <div
               className="hero-portrait rise"
