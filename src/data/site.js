@@ -107,7 +107,7 @@ export const site = {
       building: 'Building PulseLab',
     },
     actions: {
-      resumeLabel: 'Download Resume',
+      resumeLabel: 'View Resume',
       stackLabel: 'View Stack',
       stackHref: '#skills',
     },
@@ -319,10 +319,11 @@ export const site = {
     badge: 'Designed + built by Thompson',
     giant: 'Thompson',
   },
-  // ---- Header resume (edit when the real PDF is ready) ----
-  // Drop the finished file at public/resume.pdf — same filename keeps
-  // every link working with no code changes.
-  resume: { label: 'Resume', href: '/resume.pdf', fileName: 'Thompson-Harzolat-Resume.pdf' },
+  // ---- Header resume ----
+  // The PDF lives at public/resume.pdf — same filename keeps every
+  // button working with no code changes. Buttons preview it in the
+  // browser's PDF viewer (new tab); the viewer offers the download.
+  resume: { label: 'Resume', href: '/resume.pdf' },
   email: 't.harzolat019@gmail.com',
   community: {
     name: 'PulseLab',

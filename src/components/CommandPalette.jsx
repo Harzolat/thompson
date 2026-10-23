@@ -42,13 +42,10 @@ function CommandPalette({ open, onClose }) {
       window.setTimeout(onClose, 750);
     }
 
-    function downloadResume() {
-      const link = document.createElement('a');
-      link.href = site.resume.href;
-      link.download = site.resume.fileName;
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
+    function openResume() {
+      // Preview in the browser's PDF viewer (its own toolbar offers
+      // the download) instead of forcing a file download.
+      window.open(site.resume.href, '_blank', 'noopener');
       onClose();
     }
 
@@ -76,9 +73,9 @@ function CommandPalette({ open, onClose }) {
           },
           {
             id: 'action-resume',
-            label: 'Download resume',
+            label: 'View resume',
             hint: 'PDF',
-            run: downloadResume,
+            run: openResume,
           },
           {
             id: 'action-copy',

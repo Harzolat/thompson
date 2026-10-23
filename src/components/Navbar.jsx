@@ -326,8 +326,9 @@ function Navbar({ onOpenPalette, ready = true }) {  const [open, setOpen] = useS
           <a
             className="resume-btn"
             href={site.resume.href}
-            download={site.resume.fileName}
-            aria-label={`Download ${site.resume.label} (PDF)`}
+            target="_blank"
+            rel="noopener"
+            aria-label={`Preview ${site.resume.label} (PDF)`}
           >
             <FileText size={16} strokeWidth={2} aria-hidden="true" />
             <span className="resume-label">{site.resume.label}</span>
@@ -393,7 +394,8 @@ function Navbar({ onOpenPalette, ready = true }) {  const [open, setOpen] = useS
             <li>
               <a
                 href={site.resume.href}
-                download={site.resume.fileName}
+                target="_blank"
+                rel="noopener"
                 className="nav-cta"
                 onClick={() => setOpen(false)}
               >

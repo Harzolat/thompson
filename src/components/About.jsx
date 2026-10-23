@@ -97,7 +97,8 @@ function About() {
                 <a
                   className="btn-primary btn-small"
                   href={site.resume.href}
-                  download={site.resume.fileName}
+                  target="_blank"
+                  rel="noopener"
                 >
                   {about.actions.resumeLabel}
                 </a>
