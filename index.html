@@ -1,5 +1,7 @@
 <!doctype html>
-<html lang="en">
+<!-- Dark is the default theme; the pre-paint script below applies a
+     stored light preference before first paint. -->
+<html lang="en" data-theme="dark">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -15,7 +17,7 @@
     <link rel="manifest" href="/manifest.json" />
 
     <!-- Theme + SEO -->
-    <meta name="theme-color" content="#fafaf8" />
+    <meta name="theme-color" content="#0d0d0c" />
     <link rel="canonical" href="https://harzolat.vercel.app/" />
     <meta property="og:type" content="website" />
     <meta property="og:locale" content="en_US" />
@@ -47,13 +49,15 @@
       content="Thompson Harzolat — Building ideas into digital experiences."
     />
     <script>
-      // Apply the saved theme before first paint (no light flash).
+      // Dark is the default theme (html tag + theme-color meta above);
+      // a stored light preference is applied before first paint so
+      // there is no flash of the wrong theme.
       try {
-        if (localStorage.getItem('th-portfolio-theme') === 'dark') {
-          document.documentElement.dataset.theme = 'dark';
+        if (localStorage.getItem('th-portfolio-theme') === 'light') {
+          document.documentElement.dataset.theme = 'light';
           document
             .querySelector('meta[name="theme-color"]')
-            .setAttribute('content', '#0d0d0c');
+            .setAttribute('content', '#fafaf8');
         }
       } catch (e) {}
     </script>

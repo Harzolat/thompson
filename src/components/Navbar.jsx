@@ -90,8 +90,10 @@ function PillTab({ item, isActive, current, onGo, badge }) {
 function Navbar({ onOpenPalette, ready = true }) {  const [open, setOpen] = useState(false); // mobile menu
   const [activeId, setActiveId] = useState('top');
   const [dismissed, setDismissed] = useState(false);
+  // Dark is the default theme; only an explicit stored 'light'
+  // preference wins (fresh visitors land on dark).
   const [theme, setTheme] = useState(
-    () => (localStorage.getItem('th-portfolio-theme') === 'dark' ? 'dark' : 'light'),
+    () => (localStorage.getItem('th-portfolio-theme') === 'light' ? 'light' : 'dark'),
   );
   const barRef = useRef(null);
   // Guards the theme reveal: re-clicking mid-flight skips cleanly
