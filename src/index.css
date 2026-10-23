@@ -29,6 +29,14 @@
   --font-mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
   --font-script: 'Caveat', 'Segoe Script', 'Bradley Hand', cursive;
 
+  /* Typography sizes — the shared body tiers. Display sizes stay
+     hand-tuned per element with clamp(); these cover the copy that
+     repeats across sections. */
+  --text-body: 17px; /* main paragraphs */
+  --text-support: 15px; /* descriptions and supporting copy */
+  --text-meta: 12px; /* small labels and metadata */
+  --lh-body: 1.65; /* paragraph rhythm */
+
   /* Layout */
   --max-width: 1160px;
   --gutter: 24px;
@@ -72,16 +80,17 @@
 
 /* Handwritten greeting above the hero name (aria-hidden decoration;
    ink-colored so the mobile hero's token flip keeps it readable).
-   Block + fit-content so it hugs the text — the -2.5deg tilt pivots
-   at its left edge, and it stays a centered block under the mobile
-   copy's centered layout. */
+   Kept small — ~20px at a medium weight — so it reads as a margin
+   note to the headline, never a competitor. Block + fit-content so
+   it hugs the text: the -2.5deg tilt pivots at its left edge, and
+   it stays a centered block under the mobile copy's layout. */
 .hero-greeting {
   display: block;
   width: fit-content;
-  margin: 0 0 4px;
+  margin: 2px 0 6px;
   font-family: var(--font-script);
-  font-size: clamp(26px, 3vw, 34px);
-  font-weight: 600;
+  font-size: clamp(19px, 1.7vw, 21px);
+  font-weight: 500;
   line-height: 1;
   letter-spacing: 0;
   color: var(--color-ink);
@@ -89,13 +98,15 @@
   transform-origin: left center;
 }
 
-/* Handwritten sign-off closing the contact panel (always charcoal). */
+/* Handwritten sign-off closing the contact panel (always charcoal).
+   Scaled just above the hero greeting — a closing flourish, never
+   the loudest script on the page. */
 .contact-signoff {
   display: block;
   margin-top: clamp(28px, 3.5vw, 40px);
   font-family: var(--font-script);
-  font-size: clamp(26px, 2.8vw, 32px);
-  font-weight: 600;
+  font-size: clamp(22px, 2.2vw, 26px);
+  font-weight: 500;
   line-height: 1;
   letter-spacing: 0;
   color: rgba(255, 255, 255, 0.85);
@@ -133,8 +144,8 @@ section[id] {
 
 body {
   font-family: var(--font-sans);
-  font-size: 17px;
-  line-height: 1.65;
+  font-size: var(--text-body);
+  line-height: var(--lh-body);
   color: var(--color-gray);
   background: var(--color-bg);
   -webkit-font-smoothing: antialiased;
@@ -2049,7 +2060,7 @@ button.link-arrow {
    surrounding display type optically; the underline draw is kept. */
 .statement-accent {
   font-family: var(--font-script);
-  font-weight: 600;
+  font-weight: 500;
   font-size: 1.15em;
   line-height: 1;
   letter-spacing: 0;
@@ -2650,7 +2661,7 @@ button.link-arrow {
 .pillar-items {
   list-style: none;
   padding: 0;
-  font-size: 15px;
+  font-size: var(--text-support);
 }
 
 .pillar-items li {
@@ -2989,9 +3000,9 @@ button.link-arrow {
 }
 
 .cover-study {
-  font-size: 11px;
+  font-size: var(--text-meta);
   font-weight: 600;
-  letter-spacing: 0.22em;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
   color: rgba(255, 255, 255, 0.45);
 }
@@ -3039,9 +3050,9 @@ button.link-arrow {
 }
 
 .work-abstract-cat {
-  font-size: 11px;
+  font-size: var(--text-meta);
   font-weight: 600;
-  letter-spacing: 0.16em;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
   color: rgba(255, 255, 255, 0.6);
   border: 1px solid rgba(255, 255, 255, 0.25);
@@ -3054,9 +3065,9 @@ button.link-arrow {
   position: absolute;
   top: 18px;
   right: 20px;
-  font-size: 12px;
+  font-size: var(--text-meta);
   font-weight: 600;
-  letter-spacing: 0.14em;
+  letter-spacing: 0.08em;
   color: var(--color-muted);
   background: rgba(250, 250, 248, 0.85);
   border-radius: 999px;
@@ -3065,9 +3076,9 @@ button.link-arrow {
 
 /* Featured text */
 .work-num {
-  font-size: 12px;
+  font-size: var(--text-meta);
   font-weight: 600;
-  letter-spacing: 0.14em;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--color-muted);
   margin-bottom: 12px;
@@ -3130,9 +3141,9 @@ button.link-arrow {
 }
 
 .work-meta dt {
-  font-size: 11px;
+  font-size: var(--text-meta);
   font-weight: 600;
-  letter-spacing: 0.14em;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--color-muted);
   margin-bottom: 6px;
@@ -3240,15 +3251,15 @@ button.link-arrow {
 
 .work-row-desc {
   display: block;
-  font-size: 15px;
+  font-size: var(--text-support);
   margin-bottom: 8px;
 }
 
 .work-row-meta {
   display: block;
-  font-size: 12px;
+  font-size: var(--text-meta);
   font-weight: 600;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--color-muted);
 }
@@ -3524,9 +3535,9 @@ button.link-arrow {
 }
 
 .preview-cover-cat {
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 600;
-  letter-spacing: 0.16em;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   color: rgba(255, 255, 255, 0.65);
 }
@@ -3589,7 +3600,7 @@ button.link-arrow {
 }
 
 .skills-note {
-  font-size: 15px;
+  font-size: var(--text-support);
   max-width: 38ch;
 }
 
@@ -3631,9 +3642,9 @@ button.link-arrow {
 }
 
 .skill-index {
-  font-size: 12px;
+  font-size: var(--text-meta);
   font-weight: 600;
-  letter-spacing: 0.14em;
+  letter-spacing: 0.08em;
   color: var(--color-muted);
 }
 
@@ -3743,7 +3754,7 @@ button.link-arrow {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 6px 24px;
-  font-size: 15px;
+  font-size: var(--text-support);
 }
 
 /* ---------- Scroll reveal (same pattern as other sections) ---------- */
@@ -3960,16 +3971,16 @@ button.link-arrow {
 }
 
 .milestone-period {
-  font-size: 11px;
+  font-size: var(--text-meta);
   font-weight: 600;
-  letter-spacing: 0.16em;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--color-muted);
 }
 
 .milestone-date {
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: var(--text-meta);
   font-weight: 600;
   letter-spacing: 0.06em;
   color: var(--color-gray);
@@ -4152,7 +4163,7 @@ button.link-arrow {
 }
 
 .creative-closing {
-  font-size: 15px;
+  font-size: var(--text-support);
   font-style: italic;
   color: var(--color-muted);
 }
@@ -4227,9 +4238,9 @@ button.link-arrow {
   top: 14px;
   left: 16px;
   z-index: 5;
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 600;
-  letter-spacing: 0.2em;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--color-muted);
 }
