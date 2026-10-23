@@ -179,6 +179,11 @@ img {
   border-radius: 4px;
 }
 
+/* Pointer/tap focus never keeps the ring — only keyboard focus does */
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
 /* ---------- 3. Helpers ---------- */
 .container {
   width: min(var(--max-width), 100% - (var(--gutter) * 2));
@@ -2622,7 +2627,6 @@ button.link-arrow {
 
 .lab-pillar:hover,
 .lab-pillar:focus-visible,
-.lab-pillar:focus,
 .lab-pillar.is-active {
   transform: translateY(-4px);
   border-color: var(--color-accent);
@@ -3165,7 +3169,7 @@ button.link-arrow {
 }
 
 .work-row:hover,
-.work-row:focus-within {
+.work-row:has(:focus-visible) {
   border-color: rgba(36, 71, 245, 0.5);
   box-shadow:
     inset 0 0 0 1px rgba(255, 255, 255, 0.65),
@@ -3179,7 +3183,7 @@ button.link-arrow {
 }
 
 [data-theme='dark'] .work-row:hover,
-[data-theme='dark'] .work-row:focus-within {
+[data-theme='dark'] .work-row:has(:focus-visible) {
   border-color: rgba(59, 130, 246, 0.5);
   box-shadow:
     0 4px 24px -2px rgba(59, 130, 246, 0.2),
@@ -3211,7 +3215,7 @@ button.link-arrow {
 }
 
 .work-row:hover::before,
-.work-row:focus-within::before {
+.work-row:has(:focus-visible)::before {
   transform: scaleY(1);
 }
 
@@ -3297,7 +3301,7 @@ button.link-arrow {
 }
 
 .work-row:hover .work-row-detail,
-.work-row:focus-within .work-row-detail {
+.work-row:has(:focus-visible) .work-row-detail {
   grid-template-rows: 1fr;
   opacity: 1;
   margin-top: 24px;
@@ -3920,15 +3924,13 @@ button.link-arrow {
 }
 
 .milestone:hover,
-.milestone:focus-visible,
-.milestone:focus {
+.milestone:focus-visible {
   transform: translateX(6px);
   border-top-color: var(--color-ink);
 }
 
 .milestone:hover + .milestone,
-.milestone:focus-visible + .milestone,
-.milestone:focus + .milestone {
+.milestone:focus-visible + .milestone {
   border-top-color: var(--color-ink);
 }
 
@@ -3945,7 +3947,6 @@ button.link-arrow {
 
 .milestone:hover .milestone-num,
 .milestone:focus-visible .milestone-num,
-.milestone:focus .milestone-num,
 .milestone.is-current .milestone-num {
   color: var(--color-accent);
 }
@@ -4106,8 +4107,7 @@ button.link-arrow {
   }
 
   .milestone:hover,
-  .milestone:focus-visible,
-  .milestone:focus {
+  .milestone:focus-visible {
     transform: translateX(4px);
   }
 }
