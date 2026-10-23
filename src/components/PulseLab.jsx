@@ -1,5 +1,6 @@
-import { Suspense, lazy, useEffect, useRef, useState } from 'react';
+import { Suspense, lazy, useRef, useState } from 'react';
 import { site } from '../data/site.js';
+import useSectionReveal from '../hooks/useSectionReveal.js';
 
 // Sandbox controls load on demand — never part of the initial bundle.
 const PulseSandbox = lazy(() => import('./PulseSandbox.jsx'));
@@ -11,7 +12,7 @@ const PulseSandbox = lazy(() => import('./PulseSandbox.jsx'));
 // Traveling dots use <animateMotion> — plain SVG, no library.
 // Sandbox: density / accent / speed controls drive the SVG live via
 // discrete state (layout arrays, CSS variable, SMIL durations).
-// Entrance: one IntersectionObserver adds .is-visible once (same pattern as About).
+// Entrance: useSectionReveal adds .is-visible once (shared with every section).
 
 const CENTER = { x: 200, y: 200 };
 
@@ -89,34 +90,14 @@ function PulseLab() {
   const [speed, setSpeed] = useState(1);
   const layout = LAYOUTS[density];
 
-  // Reveal once when the section enters the viewport.
-  useEffect(() => {
-    const el = sectionRef.current;
-    if (!el) return;
-    if (typeof IntersectionObserver === 'undefined') {
-      el.classList.add('is-visible', 'is-inview');
-      return;
-    }
-    // Kept observing (not disconnected): entrance plays once via
-    // .is-visible, while .is-inview toggles the idle loops on/off.
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const visible = entries[0].isIntersecting;
-        el.classList.toggle('is-inview', visible);
-        setInView(visible);
-        if (visible) {
-          el.classList.add('is-visible');
-          // Clear entrance delays once so hover stays instant afterwards.
-          if (!el.classList.contains('is-settled')) {
-            window.setTimeout(() => el.classList.add('is-settled'), 1400);
-          }
-        }
-      },
-      { threshold: 0.15 },
-    );
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, []);
+  // Reveal once when the section enters the viewport. Kept observing
+  // (trackInView): entrance plays once via .is-visible, while
+  // .is-inview + inView toggle the idle pulses on/off.
+  useSectionReveal(sectionRef, {
+    threshold: 0.15,
+    trackInView: true,
+    onInView: setInView,
+  });
 
   const caption =
     active === null
@@ -146,12 +127,14 @@ function PulseLab() {
           {/* Left — wordmark, statement, description */}
           <div className="lab-copy">
             <p className="lab-kicker reveal-item">{pulseLab.kicker}</p>
-            <h2 className="lab-title reveal-item">
+            {/* Page heading of the /pulselab route — h1, since this
+                section only ever renders standalone (PulseLabPage). */}
+            <h1 className="lab-title reveal-item">
               {pulseLab.title}
               <span className="accent-dot" aria-hidden="true">
                 .
               </span>
-            </h2>
+            </h1>
             <p className="lab-statement reveal-item">{pulseLab.statement}</p>
             <p className="lab-desc reveal-item">{pulseLab.description}</p>
 

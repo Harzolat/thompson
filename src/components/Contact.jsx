@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Check, Copy } from 'lucide-react';
 import { site } from '../data/site.js';
 import copyText from '../utils/copyText.js';
+import useSectionReveal from '../hooks/useSectionReveal.js';
 
 // Contact: invitation + a real Formspree-backed form. Submit states are
 // honest because the backend confirms them: idle → submitting → success
@@ -32,32 +33,17 @@ function Contact() {
   const statusTimer = useRef(0);
 
   // Reveal once when the section enters the viewport.
-  useEffect(() => {
-    const el = sectionRef.current;
-    if (!el) return;
-    if (typeof IntersectionObserver === 'undefined') {
-      el.classList.add('is-visible');
-      return;
-    }
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting) {
-          el.classList.add('is-visible');
-          // Clear entrance delays so hover stays instant afterwards.
-          window.setTimeout(() => el.classList.add('is-settled'), 1400);
-          observer.disconnect();
-        }
-      },
-      { threshold: 0.2 },
-    );
-    observer.observe(el);
-    return () => {
-      observer.disconnect();
+  useSectionReveal(sectionRef, { threshold: 0.2 });
+
+  // Pending toast / copy / status timers die with the component.
+  useEffect(
+    () => () => {
       window.clearTimeout(toastTimer.current);
       window.clearTimeout(copyTimer.current);
       window.clearTimeout(statusTimer.current);
-    };
-  }, []);
+    },
+    [],
+  );
 
   function showToast(message) {
     window.clearTimeout(toastTimer.current);
@@ -134,7 +120,10 @@ function Contact() {
         <div className="contact-grid">
           {/* Main — headline, intro, form, direct email, socials */}
           <div className="contact-main">
-            <h2 className="contact-statement reveal-item">{contact.statement}</h2>
+            <h2 className="contact-statement reveal-item">
+              {contact.statement}{' '}
+              <span className="title-accent">{contact.statementAccent}</span>
+            </h2>
             <p className="contact-intro reveal-item">{contact.intro}</p>
 
             <form
@@ -239,7 +228,7 @@ function Contact() {
               ))}
             </ul>
 
-            {/* Handwritten sign-off closing the panel */}
+            {/* Serif italic sign-off closing the panel */}
             <p className="contact-signoff reveal-item">— Thompson</p>
           </div>
 

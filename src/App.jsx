@@ -1,5 +1,5 @@
 import { Suspense, lazy, useCallback, useEffect, useState } from 'react';
-import { AnimatePresence } from 'motion/react';
+import { AnimatePresence, MotionConfig } from 'motion/react';
 import { BrowserRouter, Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import Cursor from './components/Cursor.jsx';
 import Loader from './components/Loader.jsx';
@@ -119,28 +119,33 @@ function App() {
 
   return (
     <BrowserRouter>
-      <a className="skip-link" href="#main">
-        Skip to content
-      </a>
-      <AnimatePresence onExitComplete={() => setRevealed(true)}>
-        {loading && <Loader onDone={handleDone} />}
-      </AnimatePresence>
-      {paletteOpen && (
-        <Suspense fallback={null}>
-          <CommandPalette open={paletteOpen} onClose={closePalette} />
-        </Suspense>
-      )}
-      <div inert={revealed ? undefined : true}>
-        <Cursor />
-        <Navbar onOpenPalette={openPalette} ready={!loading} />
-        <ScrollManager />
-        <Routes>
-          <Route path="/" element={<Home ready={!loading} />} />
-          <Route path="/pulselab" element={<PulseLabPage />} />
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
-        <Footer />
-      </div>
+      {/* One reduced-motion contract for every Motion animation on the
+          site: transforms jump to their end state, opacity still plays.
+          (Loader, cursor and the CSS entrances already gate themselves.) */}
+      <MotionConfig reducedMotion="user">
+        <a className="skip-link" href="#main">
+          Skip to content
+        </a>
+        <AnimatePresence onExitComplete={() => setRevealed(true)}>
+          {loading && <Loader onDone={handleDone} />}
+        </AnimatePresence>
+        {paletteOpen && (
+          <Suspense fallback={null}>
+            <CommandPalette open={paletteOpen} onClose={closePalette} />
+          </Suspense>
+        )}
+        <div inert={revealed ? undefined : true}>
+          <Cursor />
+          <Navbar onOpenPalette={openPalette} ready={!loading} />
+          <ScrollManager />
+          <Routes>
+            <Route path="/" element={<Home ready={!loading} />} />
+            <Route path="/pulselab" element={<PulseLabPage />} />
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+          <Footer />
+        </div>
+      </MotionConfig>
     </BrowserRouter>
   );
 }

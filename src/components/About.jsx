@@ -1,13 +1,14 @@
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { site } from '../data/site.js';
 import useGitHubStats from '../hooks/useGitHub.js';
+import useSectionReveal from '../hooks/useSectionReveal.js';
 
 // PHASE 3 — About ("Behind the builds").
 // Editorial asymmetric layout: label left, statement + text right,
 // one quiet visual (identity card with intentional portrait slot).
-// Entrance: a single IntersectionObserver adds .is-visible once;
-// CSS staggers the children. After that the section stays calm.
+// Entrance: useSectionReveal adds .is-visible once; CSS staggers the
+// children. After that the section stays calm.
 
 // Live GitHub strip for the About column. Silent when offline or
 // rate-limited — the section never depends on it.
@@ -37,32 +38,7 @@ function About() {
   // Missing-file guard: fall back to the placeholder, never a broken image.
   const [photoFailed, setPhotoFailed] = useState(false);
 
-  useEffect(() => {
-    const el = sectionRef.current;
-    if (!el) return;
-
-    // If the browser has no IntersectionObserver, just show everything.
-    if (typeof IntersectionObserver === 'undefined') {
-      el.classList.add('is-visible');
-      return;
-    }
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting) {
-          el.classList.add('is-visible');
-          // Entrance delays must not slow down hover afterwards,
-          // so clear them once the entrance has finished playing.
-          window.setTimeout(() => el.classList.add('is-settled'), 1400);
-          observer.disconnect(); // animate once, then stay calm
-        }
-      },
-      { threshold: 0.2 },
-    );
-
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, []);
+  useSectionReveal(sectionRef, { threshold: 0.2 });
 
   return (
     <section

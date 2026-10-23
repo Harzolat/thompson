@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { motion } from 'motion/react';
 import { Copy } from 'lucide-react';
 import { site } from '../data/site.js';
 import copyText from '../utils/copyText.js';
@@ -7,9 +8,10 @@ import LogoMarquee from './LogoMarquee.jsx';
 import HeroScrollVisual from './HeroScrollVisual.jsx';
 
 // PHASE 23 — Hero: centered editorial intro + scroll-reactive artwork.
-// Layer 1 (this file): identity, headline, description, CTAs — staged
-// entrance, magnetic primary button. Layer 2 (HeroScrollVisual): the
-// Container Scroll card, the hero's primary visual interaction.
+// Layer 1 (this file): identity, headline, description, CTAs — a
+// Motion-sequenced entrance, magnetic primary button. Layer 2
+// (HeroScrollVisual): the Container Scroll card, the hero's primary
+// visual interaction.
 // The old pulse-field visual was retired to avoid two competing hero
 // visuals; a small wave motif lives on inside the artwork.
 //
@@ -17,6 +19,16 @@ import HeroScrollVisual from './HeroScrollVisual.jsx';
 // so moving the mouse causes zero React re-renders.
 
 const reduceMotionQuery = '(prefers-reduced-motion: reduce)';
+
+// Role line split: the part after " & " gets the serif italic accent.
+const [ROLE_HEAD = site.roleTitle, ROLE_TAIL] = site.roleTitle.split(' & ');
+
+// Entrance vocabulary — one curve for the whole sequence, identical to
+// --ease in index.css. Elements rise 18px; the name lines slide up
+// behind their mask. Delays are the original art-directed timings.
+const EASE = [0.22, 1, 0.36, 1];
+const RISE = { hidden: { opacity: 0, y: 18 }, show: { opacity: 1, y: 0 } };
+const LINE = { hidden: { opacity: 0, y: '110%' }, show: { opacity: 1, y: '0%' } };
 
 function Hero({ ready = true }) {
   const magnetRef = useRef(null);
@@ -30,6 +42,15 @@ function Hero({ ready = true }) {
   // Portrait guard: a missing file hides the slot instead of showing a
   // broken image (see public/images/README.md).
   const [portraitFailed, setPortraitFailed] = useState(false);
+
+  // One transition for every entrance element: reduced motion skips
+  // the travel AND the wait (no duration, no delay), everyone else
+  // gets the staged timings below. The sequence only plays when the
+  // loader has lifted (`ready`), mirroring the old .hero-waiting gate.
+  function seq(delay, duration = 0.7) {
+    if (reducedMotion) return { duration: 0 };
+    return { delay, duration, ease: EASE };
+  }
 
   // Cancel any queued frame on unmount.
   useEffect(() => () => {
@@ -77,37 +98,70 @@ function Hero({ ready = true }) {
         <div className="hero-viewport">
         <div className="hero-top">
           <div className="hero-copy">
-            {/* Handwritten greeting — decorative; the accessible name
+            {/* Serif greeting — decorative; the accessible name
                 stays the headline alone. First element in the copy
                 stack, so it carries the earliest entrance delay. */}
-            <span
-              className="hero-greeting rise"
-              style={{ animationDelay: '0.05s' }}
+            <motion.span
+              className="hero-greeting"
+              variants={RISE}
+              initial="hidden"
+              animate={ready ? 'show' : 'hidden'}
+              transition={seq(0.05)}
               aria-hidden="true"
             >
               hey, I’m
-            </span>
+            </motion.span>
 
             <h1 className="hero-title">
               <span className="mask">
-                <span className="mask-inner" style={{ animationDelay: '0.15s' }}>
+                <motion.span
+                  className="mask-inner"
+                  variants={LINE}
+                  initial="hidden"
+                  animate={ready ? 'show' : 'hidden'}
+                  transition={seq(0.15, 0.9)}
+                >
                   Thompson
-                </span>
+                </motion.span>
               </span>
               <span className="mask">
-                <span className="mask-inner" style={{ animationDelay: '0.27s' }}>
+                <motion.span
+                  className="mask-inner"
+                  variants={LINE}
+                  initial="hidden"
+                  animate={ready ? 'show' : 'hidden'}
+                  transition={seq(0.27, 0.9)}
+                >
                   Harzolat<span className="accent-dot" aria-hidden="true">.</span>
-                </span>
+                </motion.span>
               </span>
             </h1>
 
-            <p className="hero-role rise" style={{ animationDelay: '0.39s' }}>
-              {site.roleTitle}
-            </p>
+            <motion.p
+              className="hero-role"
+              variants={RISE}
+              initial="hidden"
+              animate={ready ? 'show' : 'hidden'}
+              transition={seq(0.39)}
+            >
+              {ROLE_HEAD}
+              {ROLE_TAIL && (
+                <>
+                  {' '}
+                  <span className="role-accent">&amp; {ROLE_TAIL}</span>
+                </>
+              )}
+            </motion.p>
 
-            <p className="hero-sub rise" style={{ animationDelay: '0.5s' }}>
+            <motion.p
+              className="hero-sub"
+              variants={RISE}
+              initial="hidden"
+              animate={ready ? 'show' : 'hidden'}
+              transition={seq(0.5)}
+            >
               {site.description}
-            </p>
+            </motion.p>
           </div>
 
           {/* Portrait: his cutout photo (hero.portrait in site.js).
@@ -116,23 +170,32 @@ function Hero({ ready = true }) {
               hero backdrop behind a dark scrim. A failed load hides
               the slot. */}
           {site.hero.portrait?.src && !portraitFailed ? (
-            <div
-              className="hero-portrait rise"
-              style={{ animationDelay: '0.3s' }}
+            <motion.div
+              className="hero-portrait"
+              variants={RISE}
+              initial="hidden"
+              animate={ready ? 'show' : 'hidden'}
+              transition={seq(0.3)}
             >
               <img
                 src={site.hero.portrait.src}
                 alt={site.hero.portrait.alt}
                 loading="eager"
-                fetchpriority="high"
+                fetchPriority="high"
                 decoding="async"
                 onError={() => setPortraitFailed(true)}
               />
-            </div>
+            </motion.div>
           ) : null}
         </div>
 
-        <div className="hero-ctas rise" style={{ animationDelay: '0.62s' }}>
+        <motion.div
+          className="hero-ctas"
+          variants={RISE}
+          initial="hidden"
+          animate={ready ? 'show' : 'hidden'}
+          transition={seq(0.62)}
+        >
           <Link
             ref={magnetRef}
             className="btn-primary"
@@ -154,13 +217,25 @@ function Hero({ ready = true }) {
           <Link className="link-arrow" to="/pulselab">
             Explore PulseLab <span aria-hidden="true">→</span>
           </Link>
-        </div>
+        </motion.div>
 
-        <p className="hero-status rise" style={{ animationDelay: '0.72s' }}>
+        <motion.p
+          className="hero-status"
+          variants={RISE}
+          initial="hidden"
+          animate={ready ? 'show' : 'hidden'}
+          transition={seq(0.72)}
+        >
           {site.status}
-        </p>
+        </motion.p>
 
-        <ul className="hero-stats rise" style={{ animationDelay: '0.8s' }}>
+        <motion.ul
+          className="hero-stats"
+          variants={RISE}
+          initial="hidden"
+          animate={ready ? 'show' : 'hidden'}
+          transition={seq(0.8)}
+        >
           {site.heroStats.map((stat) => (
             <li
               key={stat.label}
@@ -174,14 +249,20 @@ function Hero({ ready = true }) {
               </span>
             </li>
           ))}
-        </ul>
+        </motion.ul>
 
         {/* Mark + label strip: disciplines and tools from site.js
             (heroMarquee); icons are lucide, logos live in
             public/images/logos. */}
-        <div className="hero-marquee rise" style={{ animationDelay: '0.86s' }}>
+        <motion.div
+          className="hero-marquee"
+          variants={RISE}
+          initial="hidden"
+          animate={ready ? 'show' : 'hidden'}
+          transition={seq(0.86)}
+        >
           <LogoMarquee items={site.heroMarquee} label="What I do and tools" />
-        </div>
+        </motion.div>
         </div>
 
         {/* ---- Layer 2: scroll-reactive artwork ---- */}

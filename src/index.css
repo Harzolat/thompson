@@ -23,11 +23,11 @@
 
   /* Typography — every family has one job:
      display = headings and display text, sans = body + interface,
-     script = the handwritten accents, mono = technical detail. */
+     serif = the editorial italic accents, mono = technical detail. */
   --font-display: 'Space Grotesk', var(--font-sans);
   --font-sans: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
   --font-mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
-  --font-script: 'Caveat', 'Segoe Script', 'Bradley Hand', cursive;
+  --font-serif: 'Playfair Display', Georgia, 'Times New Roman', serif;
 
   /* Typography sizes — the shared body tiers. Display sizes stay
      hand-tuned per element with clamp(); these cover the copy that
@@ -46,15 +46,20 @@
   /* Motion (used from Phase 2 onward) */
   --ease: cubic-bezier(0.22, 1, 0.36, 1);
   --duration: 0.5s;
+  /* Section reveal rhythm — one distance and one duration for every
+     .reveal-item entrance on the site (per-section stagger delays
+     stay in their own rules, they are art direction). */
+  --reveal-y: 20px;
+  --reveal-dur: 0.7s;
 }
 
 /* ---------- 1b. Typography assignments ----------
    h1–h3 take the display family directly; the classes below carry the
    same display voice without being headings (spans, paragraphs and
    artwork type). Metadata labels that don't already use .mono take
-   the technical family. Cursive is an accent only — three places:
-   the hero greeting, the About statement's highlighted words, and
-   the contact sign-off. */
+   the technical family. The serif italic is the single accent voice —
+   the hero greeting and role-line, the About statement's highlighted
+   words, and the contact sign-off. */
 .hero-stat-value,
 .metric-value,
 .cover-year,
@@ -78,40 +83,39 @@
   font-family: var(--font-mono);
 }
 
-/* Handwritten greeting above the hero name (aria-hidden decoration;
-   ink-colored so the mobile hero's token flip keeps it readable).
-   Kept small — ~20px at a medium weight — so it reads as a margin
-   note to the headline, never a competitor. Block + fit-content so
-   it hugs the text: the -2.5deg tilt pivots at its left edge, and
-   it stays a centered block under the mobile copy's layout. */
+/* Editorial serif greeting above the hero name
+   (aria-hidden decoration; ink-colored so the mobile hero's token flip
+   keeps it readable). High-contrast italic — a deliberate lead-in to
+   the sans headline, ~38% of it at desktop so the name stays the
+   loudest voice. Block + fit-content so it hugs the text and stays a
+   centered block under the mobile copy's layout. */
 .hero-greeting {
   display: block;
   width: fit-content;
-  margin: 2px 0 6px;
-  font-family: var(--font-script);
-  font-size: clamp(19px, 1.7vw, 21px);
+  margin: 0 0 6px;
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: clamp(24px, 2.6vw, 34px);
   font-weight: 500;
-  line-height: 1;
+  line-height: 1.1;
   letter-spacing: 0;
   color: var(--color-ink);
-  rotate: -2.5deg;
-  transform-origin: left center;
 }
 
-/* Handwritten sign-off closing the contact panel (always charcoal).
-   Scaled just above the hero greeting — a closing flourish, never
-   the loudest script on the page. */
+/* Serif italic sign-off closing the contact panel — the editorial
+   counterpart to the hero greeting. Sized just above it (36 vs 34) so
+   the closing flourish keeps the ladder: statement > sign-off >
+   greeting. */
 .contact-signoff {
   display: block;
   margin-top: clamp(28px, 3.5vw, 40px);
-  font-family: var(--font-script);
-  font-size: clamp(22px, 2.2vw, 26px);
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: clamp(24px, 3vw, 36px);
   font-weight: 500;
-  line-height: 1;
+  line-height: 1.1;
   letter-spacing: 0;
   color: rgba(255, 255, 255, 0.85);
-  rotate: -1.5deg;
-  transform-origin: left center;
 }
 
 /* ---------- 2. Reset + base ---------- */
@@ -232,6 +236,16 @@ img {
   margin-bottom: 16px;
 }
 
+/* Serif italic accent chunk inside a sans section title — the
+   contrast beat, mirroring the hero role-line's accent span. Size
+   inherits the title's clamp; weight-matched to the sans 600. */
+.title-accent {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 600;
+  letter-spacing: 0;
+}
+
 .section-text {
   font-size: clamp(16px, 1.6vw, 18px);
   max-width: 58ch;
@@ -292,10 +306,10 @@ img {
   transform: translateY(-12px);
 }
 
-/* paused staged entrance: held behind the loader curtain, released
-   the moment it starts lifting */
-.hero-waiting .rise,
-.hero-waiting .mask-inner {
+/* paused CSS entrance: HeroScrollVisual's .rise is held behind the
+   loader curtain, released the moment it starts lifting. (The hero's
+   own copy entrance is Motion-driven and gates on `ready` instead.) */
+.hero-waiting .rise {
   animation-play-state: paused;
 }
 
@@ -945,6 +959,13 @@ img {
 
   .mobile-nav .nav-links.is-open {
     display: flex;
+    /* The header's backdrop-filter creates a containing block for
+       position:fixed, so inset:0 alone would size the drawer to the
+       header bar (~112px) instead of the screen. An explicit viewport
+       height makes it full-screen either way (border-box: the padding
+       above is included in the 100dvh). dvh tracks the mobile URL bar. */
+    height: 100vh;
+    height: 100dvh;
     animation: drawer-in 0.35s var(--ease);
   }
 
@@ -975,6 +996,21 @@ img {
 
   .nav-links a:hover {
     color: var(--color-ink);
+  }
+
+  /* Visible way to collapse the open drawer: the hamburger itself is
+     covered by the panel. position:fixed lands it inside the header
+     (its backdrop-filter is the containing block), i.e. exactly over
+     the toggle; z-index 410 sits just above the drawer panel (400). */
+  .menu-close {
+    position: fixed;
+    top: 6px; /* (56px header − 44px button) / 2 */
+    right: 24px; /* aligns with the drawer's horizontal padding */
+    z-index: 410;
+  }
+
+  .menu-close:hover {
+    background: var(--color-accent-soft);
   }
 
   .nav-cta {
@@ -1158,18 +1194,10 @@ img {
   margin-bottom: -0.08em;
 }
 
+/* Line target only — Motion owns the reveal (initial y 110% → 0), so
+   the choreography and reduced-motion handling live in Hero.jsx. */
 .mask-inner {
   display: block;
-  opacity: 0;
-  transform: translateY(110%);
-  animation: mask-up 0.9s var(--ease) forwards;
-}
-
-@keyframes mask-up {
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
 }
 
 /* Generic staged fade-up used by label, text, CTAs, visual */
@@ -1199,6 +1227,16 @@ img {
   letter-spacing: -0.02em;
   color: var(--color-ink);
   margin-bottom: 20px;
+}
+
+/* Serif italic accent inside the role line — echoes the hero
+   greeting; slightly upsized for optical parity with the sans. */
+.hero-role .role-accent {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 500;
+  font-size: 1.08em;
+  letter-spacing: 0;
 }
 
 /* Micro-stats bar: value over label, hairline rules */
@@ -1426,6 +1464,23 @@ img {
 .link-arrow:hover span,
 .link-arrow:focus-visible span {
   transform: translateX(5px);
+}
+
+/* Pointer press: a brief settle on controls that don't write transform
+   themselves (the magnetic hero button owns transform via JS, so it
+   stays out). Keyboard focus keeps the ring — this is pointer-only. */
+.btn-outline:active,
+.cine-pill:active,
+.cine-pill-sm:active,
+.resume-btn:active,
+.palette-btn:active,
+.theme-toggle:active,
+.nav-toggle:active,
+.nav-cta:active,
+.mobile-action:active,
+.canvas-tab:active,
+.panel-btn:active {
+  transform: translateY(1px);
 }
 
 /* link-styled buttons (case-study triggers share the arrow language) */
@@ -1787,6 +1842,9 @@ button.link-arrow {
   gap: 10px;
 }
 
+/* Stack chips — now the panel's tab controls: same pill look, but
+   interactive (cursor, hover, press, selected). No float loop: a
+   control that moves under the pointer is noise. */
 .canvas-badge {
   font-family: var(--font-mono);
   font-size: 11px;
@@ -1796,15 +1854,6 @@ button.link-arrow {
   background: rgba(255, 255, 255, 0.05);
   border-radius: 999px;
   padding: 7px 15px;
-  animation: badge-float 5s ease-in-out infinite;
-}
-
-.canvas-badge:nth-child(2) {
-  animation-delay: 1.2s;
-}
-
-.canvas-badge:nth-child(3) {
-  animation-delay: 2.4s;
 }
 
 .canvas-badge.is-accent {
@@ -1813,10 +1862,35 @@ button.link-arrow {
   background: rgba(36, 71, 245, 0.16);
 }
 
-@keyframes badge-float {
-  50% {
-    transform: translateY(-4px);
-  }
+/* experience switcher */
+.canvas-tabs {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.canvas-tab {
+  cursor: pointer;
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.canvas-tab:hover {
+  color: #fff;
+  border-color: rgba(36, 71, 245, 0.5);
+}
+
+/* Selected = solid fill (contrast + shape, never color alone) */
+.canvas-tab[aria-selected='true'] {
+  color: #fff;
+  border-color: var(--color-accent);
+  background: var(--color-accent);
 }
 
 .scroll-foot {
@@ -1847,8 +1921,199 @@ button.link-arrow {
   white-space: nowrap;
 }
 
-.scroll-caption {
-  text-align: center;
+/* ---------- Interactive stage (the three experiences) ----------
+   Fixed-height column so switching experiences crossfades in place
+   and never shifts the card. Panels read left inside a centered
+   column; controls reuse the card's hairline language. */
+.canvas-stage {
+  position: relative;
+  z-index: 1;
+  width: min(100%, 460px);
+  min-height: 250px;
+  text-align: left;
+}
+
+.panel {
+  display: flex;
+  flex-direction: column;
+  gap: 13px;
+}
+
+.panel-kicker {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.panel-readout {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  margin: 0;
+}
+
+.panel-count {
+  font-family: var(--font-display);
+  font-size: clamp(38px, 5vw, 52px);
+  font-weight: 600;
+  line-height: 1;
+  color: #fff;
+}
+
+.panel-state {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.panel-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.panel-btn {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  color: rgba(255, 255, 255, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 999px;
+  padding: 9px 16px;
+  cursor: pointer;
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.panel-btn:hover {
+  color: #fff;
+  border-color: rgba(36, 71, 245, 0.5);
+}
+
+/* Pressed/selected controls carry a solid accent fill */
+.panel-btn[aria-pressed='true'] {
+  color: #fff;
+  border-color: var(--color-accent);
+  background: var(--color-accent);
+}
+
+.panel-btn-reset {
+  margin-left: auto;
+}
+
+.panel-field {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.panel-label {
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.panel-input {
+  flex: 1 1 200px;
+  min-width: 0;
+  font-size: 12px;
+  color: #fff;
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 10px;
+  padding: 10px 12px;
+  transition: border-color 0.2s ease;
+}
+
+.panel-input:hover {
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.panel-meta {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.45);
+  white-space: nowrap;
+}
+
+.panel-output {
+  flex: 1 1 100%;
+  margin: 0;
+  min-height: 42px;
+  font-size: 12px;
+  line-height: 1.5;
+  color: #fff;
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  padding: 11px 12px;
+  overflow-wrap: anywhere;
+}
+
+.panel-empty {
+  color: rgba(255, 255, 255, 0.45);
+  font-style: italic;
+}
+
+.panel-motto {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(17px, 2vw, 20px);
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  color: #fff;
+}
+
+.panel-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.panel-blurb {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.55;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.panel-items {
+  margin: 0;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.panel-note {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.55;
+  color: rgba(255, 255, 255, 0.55);
+  max-width: 52ch;
+}
+
+.panel-foot {
+  margin: 0;
+}
+
+.panel-link {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  color: #fff;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  text-decoration-color: rgba(36, 71, 245, 0.6);
+  transition: text-decoration-color 0.2s ease;
+}
+
+.panel-link:hover {
+  text-decoration-color: var(--color-accent);
 }
 
 .pulse-caption {
@@ -1997,6 +2262,16 @@ button.link-arrow {
     flex-wrap: wrap;
     row-gap: 12px;
   }
+
+  /* Stage relaxes its floor on small screens: controls wrap taller,
+     so let the column grow rather than clip. */
+  .canvas-stage {
+    min-height: 0;
+  }
+
+  .panel-btn-reset {
+    margin-left: 0;
+  }
 }
 
 @media (max-width: 560px) {
@@ -2015,6 +2290,17 @@ button.link-arrow {
   .btn-primary {
     width: 100%;
     text-align: center;
+  }
+
+  /* The closing-banner CTA's single-line label is wider than the
+     card on small screens — full-width, wrapped and centered here
+     (same pattern as .btn-primary) so the pill stays inside. */
+  .work-more .btn-accent {
+    display: block;
+    width: 100%;
+    text-align: center;
+    white-space: normal;
+    text-wrap: balance;
   }
 }
 
@@ -2055,13 +2341,14 @@ button.link-arrow {
   margin-bottom: clamp(28px, 4vw, 48px);
 }
 
-/* The statement's highlighted words: the site's handwritten accent.
-   Caveat runs small on the em, so it sits at 1.15em to match the
-   surrounding display type optically; the underline draw is kept. */
+/* The statement's highlighted words: the site's serif italic accent.
+   Playfair's x-height matches the surrounding display sans at 1em —
+   no em bump needed; the underline draw is kept. */
 .statement-accent {
-  font-family: var(--font-script);
-  font-weight: 500;
-  font-size: 1.15em;
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 600;
+  font-size: 1em;
   line-height: 1;
   letter-spacing: 0;
   background-image: linear-gradient(var(--color-accent), var(--color-accent));
@@ -2248,10 +2535,10 @@ button.link-arrow {
 /* ---------- Scroll-triggered reveal ---------- */
 .about .reveal-item {
   opacity: 0;
-  transform: translateY(22px);
+  transform: translateY(var(--reveal-y));
   transition:
-    opacity 0.7s var(--ease),
-    transform 0.7s var(--ease);
+    opacity var(--reveal-dur) var(--ease),
+    transform var(--reveal-dur) var(--ease);
 }
 
 .about.is-visible .reveal-item {
@@ -2671,10 +2958,10 @@ button.link-arrow {
 /* ---------- Scroll-triggered reveal (same pattern as About) ---------- */
 .lab .reveal-item {
   opacity: 0;
-  transform: translateY(22px);
+  transform: translateY(var(--reveal-y));
   transition:
-    opacity 0.7s var(--ease),
-    transform 0.7s var(--ease);
+    opacity var(--reveal-dur) var(--ease),
+    transform var(--reveal-dur) var(--ease);
 }
 
 .lab.is-visible .reveal-item {
@@ -3392,10 +3679,10 @@ button.link-arrow {
 /* ---------- Scroll reveal (same pattern as About) ---------- */
 .work .reveal-item {
   opacity: 0;
-  transform: translateY(22px);
+  transform: translateY(var(--reveal-y));
   transition:
-    opacity 0.7s var(--ease),
-    transform 0.7s var(--ease);
+    opacity var(--reveal-dur) var(--ease),
+    transform var(--reveal-dur) var(--ease);
 }
 
 .work.is-visible .reveal-item {
@@ -3760,10 +4047,10 @@ button.link-arrow {
 /* ---------- Scroll reveal (same pattern as other sections) ---------- */
 .skills .reveal-item {
   opacity: 0;
-  transform: translateY(22px);
+  transform: translateY(var(--reveal-y));
   transition:
-    opacity 0.7s var(--ease),
-    transform 0.7s var(--ease);
+    opacity var(--reveal-dur) var(--ease),
+    transform var(--reveal-dur) var(--ease);
 }
 
 .skills.is-visible .reveal-item {
@@ -4036,10 +4323,10 @@ button.link-arrow {
 /* ---------- Scroll reveal: small movement only ---------- */
 .journey .reveal-item {
   opacity: 0;
-  transform: translateY(12px);
+  transform: translateY(var(--reveal-y));
   transition:
-    opacity 0.6s var(--ease),
-    transform 0.6s var(--ease),
+    opacity var(--reveal-dur) var(--ease),
+    transform var(--reveal-dur) var(--ease),
     border-color 0.3s ease;
 }
 
@@ -4463,10 +4750,10 @@ button.link-arrow {
 /* ---------- Scroll reveal (same pattern as other sections) ---------- */
 .creative .reveal-item {
   opacity: 0;
-  transform: translateY(22px);
+  transform: translateY(var(--reveal-y));
   transition:
-    opacity 0.7s var(--ease),
-    transform 0.7s var(--ease);
+    opacity var(--reveal-dur) var(--ease),
+    transform var(--reveal-dur) var(--ease);
 }
 
 .creative.is-visible .reveal-item {
@@ -4718,10 +5005,10 @@ button.link-arrow {
 /* ---------- Scroll reveal (same pattern as Journey) ---------- */
 .contact .reveal-item {
   opacity: 0;
-  transform: translateY(18px);
+  transform: translateY(var(--reveal-y));
   transition:
-    opacity 0.65s var(--ease),
-    transform 0.65s var(--ease),
+    opacity var(--reveal-dur) var(--ease),
+    transform var(--reveal-dur) var(--ease),
     background-size 0.4s var(--ease);
 }
 

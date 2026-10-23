@@ -11,7 +11,7 @@ components also fall back to the placeholder automatically via `onError`.
 
 | File               | Section | Data field to set                     | Suggested size / notes                              |
 | ------------------ | ------- | ------------------------------------- | --------------------------------------------------- |
-| `thompson.jpg`     | About   | `about.visual.image` in `site.js`     | Portrait, 4:5 (e.g. 1200×1500). Grayscale-friendly. |
+| `thompson.jpg`     | About   | `about.image` in `site.js` (filled with `portrait.webp` — a dedicated 4:5 photo is welcome to replace it) | Portrait, 4:5 (e.g. 1200×1500). Grayscale-friendly. |
 | `about-photo.jpg`  | About   | Reserved secondary About image        | Not consumed yet — for a future second frame.       |
 | `hero-visual.jpg`  | Hero    | `hero.visual.image` in `site.js`      | Wide artwork, 4:3 (e.g. 1600×1200). Above the fold. |
 | `pulselab.jpg`     | PulseLab| Reserved community artwork            | Not consumed yet — the node visual stays primary.   |
@@ -25,7 +25,7 @@ components also fall back to the placeholder automatically via `onError`.
 
 | File                   | Used by              | Notes                                              |
 | ---------------------- | -------------------- | -------------------------------------------------- |
-| `portrait.webp`        | Hero portrait        | His transparent cutout, wired as `hero.portrait` in `site.js`. Soft accent glow behind it, torso fades into the page; eager-loaded. |
+| `portrait.webp`        | Hero portrait + About card | His transparent cutout, wired as `hero.portrait` in `site.js` (soft accent glow behind it, torso fades into the page; eager-loaded) and as `about.image` for the identity card's 4:5 frame (lazy, `cover`). |
 | `marv-collection.jpg`  | Marv Collection cover| Hero screenshot, wired as long banner in `projects.js`. |
 | `marv-collection-2..5` | Reserved gallery set | `-2` wired as the hover-box shot; rest unwired until gallery UI. |
 | `stayflow.jpg`         | Stayflow cover       | Hero screenshot, wired as long banner in `projects.js`. |

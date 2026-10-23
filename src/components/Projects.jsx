@@ -2,6 +2,7 @@ import { Suspense, lazy, useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { projects } from '../data/projects.js';
 import useGitHubStats from '../hooks/useGitHub.js';
+import useSectionReveal from '../hooks/useSectionReveal.js';
 import {
   ProjectHighlights,
   ProjectLinks,
@@ -20,7 +21,8 @@ const CaseStudy = lazy(() => import('./CaseStudy.jsx'));
 //   abstract placeholder. Swap data only — no component changes needed.
 
 const LABEL = '03 / Work';
-const STATEMENT = 'Things I’ve built, explored and brought to life.';
+const STATEMENT = 'Things I’ve built, explored and';
+const STATEMENT_ACCENT = 'brought to life.';
 
 // Floating preview card size — must match .work-preview in index.css.
 const PREVIEW_W = 300;
@@ -260,29 +262,8 @@ function Projects() {
     setPreviewId(null);
   }
 
-  // Reveal once when the section enters the viewport (same pattern as About).
-  useEffect(() => {
-    const el = sectionRef.current;
-    if (!el) return;
-    if (typeof IntersectionObserver === 'undefined') {
-      el.classList.add('is-visible');
-      return;
-    }
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting) {
-          el.classList.add('is-visible');
-          // Entrance delays must not slow down hover afterwards,
-          // so clear them once the entrance has finished playing.
-          window.setTimeout(() => el.classList.add('is-settled'), 1400);
-          observer.disconnect();
-        }
-      },
-      { threshold: 0.1 },
-    );
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, []);
+  // Reveal once when the section enters the viewport (same as every section).
+  useSectionReveal(sectionRef, { threshold: 0.1 });
 
   // Cancel any queued preview frame on unmount.
   useEffect(() => () => cancelAnimationFrame(frameRef.current), []);
@@ -296,7 +277,10 @@ function Projects() {
     >
       <div className="container">
         <p className="section-label reveal-item">{LABEL}</p>
-        <h2 className="section-title work-statement reveal-item">{STATEMENT}</h2>
+        <h2 className="section-title work-statement reveal-item">
+          {STATEMENT}{' '}
+          <span className="title-accent">{STATEMENT_ACCENT}</span>
+        </h2>
 
         {/* Featured project */}
         <article className="work-feature reveal-item" aria-label={featured.title}>

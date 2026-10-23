@@ -12,7 +12,8 @@ function PulseLabCta() {
         <div className="pulse-cta-card">
           <p className="section-label">PulseLab</p>
           <h2 className="pulse-cta-title">
-            Founder &amp; Creator of PulseLab
+            Founder &amp; Creator of{' '}
+            <span className="title-accent">PulseLab</span>
           </h2>
           <p className="pulse-cta-sub">
             Explore my interactive developer sandbox, experimental UI

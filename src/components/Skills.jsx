@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import {
   AppWindow,
   BrainCircuit,
@@ -14,13 +14,14 @@ import {
   Users,
 } from 'lucide-react';
 import { site } from '../data/site.js';
+import useSectionReveal from '../hooks/useSectionReveal.js';
 
 // PHASE 6 — Capabilities: what Thompson can create (not proficiency scores).
 // Editorial index: big statement left, interactive list right.
 // Interaction = emphasis only: the hovered/focused/tapped item is full
 // strength (with a small accent marker), the rest go quiet. Nothing is
 // ever hidden, so touch + keyboard + mouse all get the full content.
-// Entrance: one IntersectionObserver adds .is-visible once.
+// Entrance: useSectionReveal adds .is-visible once.
 
 // Tile icons are looked up here; labels stay editable in site.js.
 const TILE_ICONS = {
@@ -43,28 +44,7 @@ function Skills() {
   const [active, setActive] = useState(null); // emphasized item index
   const { capabilities } = site;
 
-  useEffect(() => {
-    const el = sectionRef.current;
-    if (!el) return;
-    if (typeof IntersectionObserver === 'undefined') {
-      el.classList.add('is-visible');
-      return;
-    }
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting) {
-          el.classList.add('is-visible');
-          // Entrance delays must not slow down hover afterwards,
-          // so clear them once the entrance has finished playing.
-          window.setTimeout(() => el.classList.add('is-settled'), 1400);
-          observer.disconnect();
-        }
-      },
-      { threshold: 0.15 },
-    );
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, []);
+  useSectionReveal(sectionRef, { threshold: 0.15 });
 
   return (
     <section
@@ -77,7 +57,10 @@ function Skills() {
         {/* Left — statement */}
         <div className="skills-side">
           <p className="section-label reveal-item">{capabilities.label}</p>
-          <h2 className="skills-statement reveal-item">{capabilities.statement}</h2>
+          <h2 className="skills-statement reveal-item">
+            {capabilities.statement}{' '}
+            <span className="title-accent">{capabilities.statementAccent}</span>
+          </h2>
           <p className="skills-note reveal-item">{capabilities.note}</p>
         </div>
 

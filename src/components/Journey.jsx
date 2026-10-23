@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { site } from '../data/site.js';
+import useSectionReveal from '../hooks/useSectionReveal.js';
 
 // Journey: how the curiosity evolved. Sticky statement left, milestone
 // rail right: vertical line, per-stage nodes that light up as each stage
@@ -15,28 +16,7 @@ function Journey() {
   const [current, setCurrent] = useState(0);
 
   // Reveal once when the section enters the viewport.
-  useEffect(() => {
-    const el = sectionRef.current;
-    if (!el) return;
-    if (typeof IntersectionObserver === 'undefined') {
-      el.classList.add('is-visible');
-      return;
-    }
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting) {
-          el.classList.add('is-visible');
-          // Entrance delays must not slow down hover afterwards,
-          // so clear them once the entrance has finished playing.
-          window.setTimeout(() => el.classList.add('is-settled'), 1400);
-          observer.disconnect();
-        }
-      },
-      { threshold: 0.12 },
-    );
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, []);
+  useSectionReveal(sectionRef, { threshold: 0.12 });
 
   // Rail tracking: the milestone nearest the viewport middle lights up.
   useEffect(() => {
@@ -68,7 +48,10 @@ function Journey() {
         {/* Left — sticky statement */}
         <div className="journey-side">
           <p className="section-label reveal-item">{journey.label}</p>
-          <h2 className="journey-statement reveal-item">{journey.statement}</h2>
+          <h2 className="journey-statement reveal-item">
+            {journey.statement}{' '}
+            <span className="title-accent">{journey.statementAccent}</span>
+          </h2>
           <p className="journey-intro reveal-item">{journey.intro}</p>
         </div>
 

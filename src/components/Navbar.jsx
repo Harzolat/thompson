@@ -15,6 +15,7 @@ import {
   Sparkles,
   Sun,
   UserRound,
+  X,
 } from 'lucide-react';
 import { site } from '../data/site.js';
 
@@ -96,6 +97,7 @@ function Navbar({ onOpenPalette, ready = true }) {  const [open, setOpen] = useS
     () => (localStorage.getItem('th-portfolio-theme') === 'light' ? 'light' : 'dark'),
   );
   const barRef = useRef(null);
+  const toggleRef = useRef(null);
   // Guards the theme reveal: re-clicking mid-flight skips cleanly
   // instead of stacking two transitions (the classic flicker source).
   const transitioningRef = useRef(false);
@@ -219,14 +221,15 @@ function Navbar({ onOpenPalette, ready = true }) {  const [open, setOpen] = useS
     return () => document.removeEventListener('pointerdown', onPointerDown);
   }, []);
 
-  // Escape closes the mobile menu.
+  // Escape collapses the mobile menu, handing focus back to the
+  // toggle. (The command palette handles its own dismissal.)
   useEffect(() => {
     function onKeyDown(event) {
-      if (event.key === 'Escape') setOpen(false);
+      if (event.key === 'Escape' && open) closeMenu();
     }
     document.addEventListener('keydown', onKeyDown);
     return () => document.removeEventListener('keydown', onKeyDown);
-  }, []);
+  }, [open]);
 
   // Lock background scroll while the full-screen mobile menu is open.
   useEffect(() => {
@@ -237,6 +240,14 @@ function Navbar({ onOpenPalette, ready = true }) {  const [open, setOpen] = useS
       document.body.style.overflow = prev;
     };
   }, [open ]);
+
+  // Collapse the mobile menu the way any dismissal should: state plus
+  // focus back on the trigger, so keyboard/AT users land where they
+  // came from. Link activations keep their own natural focus move.
+  function closeMenu() {
+    setOpen(false);
+    toggleRef.current?.focus();
+  }
 
   function goTo(item) {
     setActiveId(item.route ? 'pulselab' : item.href.slice(1));
@@ -268,7 +279,7 @@ function Navbar({ onOpenPalette, ready = true }) {  const [open, setOpen] = useS
             alt={site.community.logoAlt}
             width={26}
             height={26}
-            fetchpriority="high"
+            fetchPriority="high"
             decoding="async"
           />
           {site.name.toUpperCase()}
@@ -348,6 +359,7 @@ function Navbar({ onOpenPalette, ready = true }) {  const [open, setOpen] = useS
           </button>
           <nav className="mobile-nav" aria-label="Mobile">
           <button
+            ref={toggleRef}
             className="nav-toggle"
             type="button"
             aria-expanded={open}
@@ -421,6 +433,19 @@ function Navbar({ onOpenPalette, ready = true }) {  const [open, setOpen] = useS
               );
             })}
           </ul>
+
+          {/* Visible way to collapse the open drawer — the hamburger
+              itself is covered by the full-screen panel. */}
+          {open && (
+            <button
+              className="nav-toggle menu-close"
+              type="button"
+              aria-label="Close menu"
+              onClick={closeMenu}
+            >
+              <X size={20} strokeWidth={2} aria-hidden="true" />
+            </button>
+          )}
           </nav>
         </div>
       </div>

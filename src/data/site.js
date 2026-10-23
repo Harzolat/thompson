@@ -77,12 +77,28 @@ export const site = {
       sandboxBadge: 'Interactive Sandbox',
       codeLine: '<Digital Experiences />',
       codeSub: 'Performant interfaces, creative code and experimentation.',
+      // The three chips double as the panel's tab controls.
       badges: ['React', 'JavaScript', 'PulseLab'],
       stack: 'Stack — React · JavaScript',
-      footRight: 'PulseLab',
-      caption: 'Selected visual study — scroll',
       image: null,
       imageAlt: '',
+      // Copy for the three interactive experiences inside the card
+      // (chip labels come from badges above).
+      experiences: {
+        react: {
+          title: 'Component playground',
+          note: 'Every control calls a state setter. React re-renders the component and the new value paints itself — no manual DOM updates.',
+          link: { label: 'See the frontend work', href: '#work' },
+        },
+        javascript: {
+          title: 'Logic playground',
+          note: 'Plain string methods transform the input as you type — state in, derived output out. No eval, no dynamic code.',
+        },
+        pulselab: {
+          title: 'Community focus',
+          note: 'The community Thompson is building — pick a focus area to see what lives there.',
+        },
+      },
     },
   },
 
@@ -96,9 +112,11 @@ export const site = {
       'I’m Thompson — a developer and creative builder. I enjoy working with programming and technology, from web experiences and interfaces to experiments with AI and emerging tools.',
       'Right now I’m building PulseLab: a community and creative space where ideas, code and experimentation turn into real projects.',
     ],
-    // Set image to '/images/thompson.jpg' (file in public/images/) to show
-    // a real portrait; null keeps the designed profile card.
-    image: null,
+    // Real photo in the identity card's frame (4:5 slot, cover). The
+    // hero cutout doubles as the card photo — its transparent edges
+    // rest on the charcoal frame; null (or a failed load) keeps the
+    // designed profile card instead.
+    image: '/images/portrait.webp',
     imageAlt: 'Portrait of Thompson Harzolat',
     card: {
       name: 'Thompson Harzolat',
@@ -126,6 +144,7 @@ export const site = {
     statement: 'A place for ideas, code and experimentation.',
     description:
       'PulseLab is a technology and creative community founded by Thompson Harzolat — focused on programming, software development, AI, digital products and experimentation.',
+    motto: 'Build. Experiment. Share. Grow together.',
     founder: 'Founded by Thompson Harzolat',
     // Spotlight points at a real section — update text/href together.
     spotlight: {
@@ -135,21 +154,27 @@ export const site = {
     },
     // Points at the dedicated /pulselab route.
     cta: { label: 'Explore PulseLab', href: '/pulselab' },
+    // blurb: one honest line per pillar, describing its items
+    // (used by the hero card's community focus picker).
     pillars: [
       {
         name: 'Build',
+        blurb: 'Turning ideas into working software — programming, product builds and web experiences.',
         items: ['Programming', 'Software development', 'Web experiences'],
       },
       {
         name: 'Explore',
+        blurb: 'Trying new things on purpose — AI, emerging technology and hands-on experimentation.',
         items: ['AI', 'Emerging technology', 'Experimentation'],
       },
       {
         name: 'Create',
+        blurb: 'Designing and shipping digital products, interfaces and creative technology.',
         items: ['Digital products', 'Creative technology', 'Interfaces'],
       },
       {
         name: 'Connect',
+        blurb: 'Learning in the open — community, shared knowledge and collaboration.',
         items: ['Community', 'Learning', 'Collaboration'],
       },
     ],
@@ -158,7 +183,8 @@ export const site = {
   // ---- Capabilities copy (edit the skills text here) ----
   capabilities: {
     label: '04 / Capabilities',
-    statement: 'I build at the intersection of code, design and ideas.',
+    statement: 'I build at the intersection of code, design and',
+    statementAccent: 'ideas.',
     note: 'What I can make — not a scoreboard of everything I’ve touched.',
     items: [
       {
@@ -229,7 +255,8 @@ export const site = {
   // ---- Journey copy (edit the journey text here) ----
   journey: {
     label: '05 / Journey',
-    statement: 'Curiosity became craft.',
+    statement: 'Curiosity became',
+    statementAccent: 'craft.',
     intro:
       'What started with an interest in technology grew into a practice of building, designing and experimenting — and creating spaces for other people to learn and build too.',
     milestones: [
@@ -283,7 +310,8 @@ export const site = {
   // ---- Creative copy (edit the creative section text here) ----
   creative: {
     label: '06 / Creative',
-    statement: 'Some ideas need to be experienced.',
+    statement: 'Some ideas need to be',
+    statementAccent: 'experienced.',
     intro:
       'A small experiment from the intersection of code, design and curiosity — a structural study you can turn over in your hands.',
     instruction: {
@@ -298,7 +326,8 @@ export const site = {
   // so contact details live in exactly one place.
   contact: {
     label: '07 / Contact',
-    statement: 'Let’s make something worth building.',
+    statement: 'Let’s make something',
+    statementAccent: 'worth building.',
     intro:
       'Have an idea, a project, a collaboration — or simply something interesting to discuss? I’m open to thoughtful conversations.',
     ctaLabel: 'Start a conversation',

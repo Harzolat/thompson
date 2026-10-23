@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { MousePointerClick, Move } from 'lucide-react';
 import { site } from '../data/site.js';
+import useSectionReveal from '../hooks/useSectionReveal.js';
 
 // PHASE 8 — Creative: one interactive digital sculpture.
 // Concept: a "structural study" — three nested wireframe cubes
@@ -61,30 +62,7 @@ function Creative() {
   // Reveal once + toggle .is-inview so the turntable idles only
   // while visible. Kept observing (not disconnected). Interaction
   // (tilt, reconfigure) works regardless of visibility.
-  useEffect(() => {
-    const el = sectionRef.current;
-    if (!el) return;
-    if (typeof IntersectionObserver === 'undefined') {
-      el.classList.add('is-visible', 'is-inview');
-      return;
-    }
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const visible = entries[0].isIntersecting;
-        el.classList.toggle('is-inview', visible);
-        if (visible) {
-          el.classList.add('is-visible');
-          // Clear entrance delays once so hover stays instant afterwards.
-          if (!el.classList.contains('is-settled')) {
-            window.setTimeout(() => el.classList.add('is-settled'), 1400);
-          }
-        }
-      },
-      { threshold: 0.2 },
-    );
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, []);
+  useSectionReveal(sectionRef, { threshold: 0.2, trackInView: true });
 
   // Cancel any queued tilt frame on unmount.
   useEffect(() => () => cancelAnimationFrame(frameRef.current), []);
@@ -125,7 +103,10 @@ function Creative() {
         {/* Left — statement */}
         <div className="creative-copy">
           <p className="section-label reveal-item">{creative.label}</p>
-          <h2 className="creative-statement reveal-item">{creative.statement}</h2>
+          <h2 className="creative-statement reveal-item">
+            {creative.statement}{' '}
+            <span className="title-accent">{creative.statementAccent}</span>
+          </h2>
           <p className="creative-intro reveal-item">{creative.intro}</p>
           <p className="creative-instruction reveal-item">
             <Move size={14} strokeWidth={2} aria-hidden="true" />
