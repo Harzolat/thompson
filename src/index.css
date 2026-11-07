@@ -286,10 +286,13 @@ img {
   /* floats above every section — only cursor (1000) and loader (2000)
      intentionally sit higher */
   z-index: 500;
-  /* blurred bar at all sizes so brand text never overlays page content */
-  background: rgba(250, 250, 248, 0.8);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  /* Frosted bar so brand text never overlays page content: a deeper
+     blur + saturation makes the effect unmistakable under scrolled
+     sections, and the 0.85 scrim keeps text legible even on engines
+     that paint backdrop-filter weakly. */
+  background: rgba(250, 250, 248, 0.85);
+  backdrop-filter: blur(16px) saturate(1.4);
+  -webkit-backdrop-filter: blur(16px) saturate(1.4);
   border-bottom: 1px solid var(--color-line);
   transition:
     opacity 0.6s ease,
@@ -297,7 +300,23 @@ img {
 }
 
 [data-theme='dark'] .site-header {
-  background: rgba(13, 13, 12, 0.8);
+  background: rgba(13, 13, 12, 0.85);
+}
+
+/* Coarse pointers (phones/tablets): drop the backdrop blur entirely.
+   Re-blurring the page behind a sticky bar on every scroll frame is
+   the classic mobile scroll-jank source; a denser scrim keeps the
+   same legibility with zero per-frame filter cost. */
+@media (pointer: coarse) {
+  .site-header {
+    background: rgba(250, 250, 248, 0.92);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+
+  [data-theme='dark'] .site-header {
+    background: rgba(13, 13, 12, 0.92);
+  }
 }
 
 /* pre-reveal state: fades/slides in as the loader lifts */
@@ -5246,6 +5265,12 @@ body.has-custom-cursor button {
 html {
   scrollbar-width: thin;
   scrollbar-color: var(--color-accent) transparent;
+  /* Reserve the scrollbar lane up front: the loader locks scrolling via
+     body overflow:hidden, which hides the classic 10px scrollbar — and
+     its return at reveal shifted the whole layout sideways (the shaky
+     load on Windows/Linux). With the gutter always reserved, the
+     scrollbar appears and disappears into its own lane. */
+  scrollbar-gutter: stable;
 }
 
 ::-webkit-scrollbar {
@@ -5686,6 +5711,188 @@ html {
   font-family: var(--font-mono);
   font-size: 13px;
   color: var(--color-gray);
+}
+
+/* ============================================================
+   GITHUB ACTIVITY MAP (About) — static contribution heatmap from
+   src/data/githubContributions.js (regenerate: npm run gitmap).
+   Intensity 1–4 rides the accent's alpha ladder; 0 is a near-empty
+   ink/white tint. No runtime API — renders offline, forever.
+   ============================================================ */
+
+.about-gitmap {
+  margin-top: clamp(30px, 4vw, 48px);
+  padding-top: clamp(22px, 3vw, 30px);
+  border-top: 1px solid var(--color-line);
+}
+
+.gitmap-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px 24px;
+  margin-bottom: 16px;
+}
+
+.gitmap-title {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+}
+
+.gitmap-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 6px 18px;
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--color-gray);
+}
+
+.gitmap-meta a {
+  color: var(--color-accent);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1px;
+}
+
+.gitmap-body {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+/* Weekday rail — stays put while the grid scrolls sideways */
+.gitmap-weekdays {
+  display: grid;
+  grid-template-rows: repeat(7, 11px);
+  gap: 3px;
+  /* matches the months block above the grid: 12px line + 8px margin */
+  padding-top: 20px;
+  flex: none;
+}
+
+.gitmap-weekdays span {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  line-height: 11px;
+  color: var(--color-muted);
+}
+
+/* The grid scrolls inside its own block — the page never scrolls
+   sideways because of it. */
+.gitmap-scroll {
+  overflow-x: auto;
+  overflow-y: hidden;
+  max-width: 100%;
+  padding-bottom: 4px;
+}
+
+.gitmap-grid {
+  width: max-content;
+}
+
+.gitmap-months,
+.gitmap-days {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 11px;
+  gap: 3px;
+}
+
+.gitmap-months {
+  height: 12px;
+  margin-bottom: 8px;
+}
+
+.gitmap-month {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  line-height: 12px;
+  color: var(--color-muted);
+  white-space: nowrap;
+}
+
+.gitmap-days {
+  grid-template-rows: repeat(7, 11px);
+}
+
+.gm-cell {
+  width: 11px;
+  height: 11px;
+  border-radius: 2px;
+}
+
+/* Intensity ramp: accent blue 1→4 as an alpha ladder (the site's
+   single accent doing the heatmap's whole job), near-empty tint for 0.
+   One ramp for both themes; only the empty tint flips ink → white. */
+.lvl-0 {
+  background: rgba(10, 10, 10, 0.06);
+}
+.lvl-1 {
+  background: rgba(36, 71, 245, 0.22);
+}
+.lvl-2 {
+  background: rgba(36, 71, 245, 0.45);
+}
+.lvl-3 {
+  background: rgba(36, 71, 245, 0.7);
+}
+.lvl-4 {
+  background: var(--color-accent);
+}
+
+[data-theme='dark'] .lvl-0 {
+  background: rgba(255, 255, 255, 0.08);
+}
+[data-theme='dark'] .lvl-1 {
+  background: rgba(36, 71, 245, 0.34);
+}
+[data-theme='dark'] .lvl-2 {
+  background: rgba(36, 71, 245, 0.55);
+}
+[data-theme='dark'] .lvl-3 {
+  background: rgba(36, 71, 245, 0.78);
+}
+
+/* Today's cell — only while the snapshot still contains today */
+.gm-cell.is-today {
+  outline: 1.5px solid var(--color-ink);
+  outline-offset: 1px;
+}
+
+.gitmap-days .gm-cell {
+  transition: transform 0.18s var(--ease);
+}
+
+.gitmap-days .gm-cell:hover {
+  transform: scale(1.35);
+}
+
+.gitmap-legend {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 4px;
+  margin-top: 10px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--color-muted);
+}
+
+.gitmap-legend span:first-child {
+  margin-right: 4px;
+}
+
+.gitmap-legend span:last-child {
+  margin-left: 4px;
 }
 
 /* ============================================================

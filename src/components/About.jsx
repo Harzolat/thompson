@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { site } from '../data/site.js';
 import useGitHubStats from '../hooks/useGitHub.js';
 import useSectionReveal from '../hooks/useSectionReveal.js';
+import Gitmap from './Gitmap.jsx';
 
 // PHASE 3 — About ("Behind the builds").
 // Editorial asymmetric layout: label left, statement + text right,
@@ -138,6 +139,12 @@ function About() {
               </div>
               <p className="id-stack">{about.card.badges.join(' · ')}</p>
             </aside>
+          </div>
+
+          {/* Static GitHub contribution heatmap — regenerated with
+              `npm run gitmap`; no runtime API, always renders. */}
+          <div className="about-gitmap reveal-item">
+            <Gitmap />
           </div>
         </div>
       </div>

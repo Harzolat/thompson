@@ -1,0 +1,24 @@
+// GENERATED FILE — do not edit by hand.
+// Regenerate: npm run gitmap   (scripts/fetch-gitmap.mjs, no dependencies)
+// Source: https://github.com/users/Harzolat/contributions (public page).
+// levels: one char per day, intensity 0–4, oldest first from `start`
+//         (a Sunday — the graph's first column).
+// counts: exact contribution totals for the days that have any.
+// Generated: 2026-11-07
+export const gitmap = {
+  start: '2025-11-02',
+  levels: '00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002010000000000000200000000000001000000000003100000000000000000000010000043000000001000002',
+  counts: {
+  '2026-11-01': 2,
+  '2026-08-12': 3,
+  '2026-09-23': 6,
+  '2026-09-24': 1,
+  '2026-10-22': 9,
+  '2026-08-14': 1,
+  '2026-08-28': 3,
+  '2026-09-11': 1,
+  '2026-10-16': 1,
+  '2026-10-23': 6,
+  '2026-11-07': 3
+  },
+};

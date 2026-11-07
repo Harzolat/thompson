@@ -7,7 +7,8 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "oxlint",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "gitmap": "node scripts/fetch-gitmap.mjs"
   },
   "dependencies": {
     "@vercel/speed-insights": "^2.0.0",
