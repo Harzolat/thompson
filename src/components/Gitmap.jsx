@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react';
 import { gitmap } from '../data/githubContributions.js';
 import { site } from '../data/site.js';
 
@@ -62,6 +63,17 @@ const cellTitle = (d) => {
 };
 
 function Gitmap() {
+  const scrollRef = useRef(null);
+
+  // On narrow screens the grid overflows and starts on the oldest,
+  // mostly-empty weeks. Open on the most recent end instead (a no-op
+  // on wide screens, where nothing overflows). Instant, not animated,
+  // so it respects reduced-motion by construction.
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (el) el.scrollLeft = el.scrollWidth;
+  }, []);
+
   return (
     <div className="gitmap">
       <div className="gitmap-head">
@@ -85,7 +97,7 @@ function Gitmap() {
           ))}
         </div>
 
-        <div className="gitmap-scroll">
+        <div className="gitmap-scroll" ref={scrollRef}>
           <div
             className="gitmap-grid"
             role="img"
