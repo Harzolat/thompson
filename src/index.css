@@ -5763,9 +5763,13 @@ html {
   text-decoration-thickness: 1px;
 }
 
+/* Grid, not flex: a minmax(0, 1fr) track lets the scroll area shrink
+   below its content's intrinsic width, so the 53-week heatmap can never
+   widen the page on small screens — it scrolls inside its own box. */
 .gitmap-body {
-  display: flex;
-  align-items: flex-start;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: start;
   gap: 10px;
 }
 
@@ -5776,7 +5780,7 @@ html {
   gap: 3px;
   /* matches the months block above the grid: 12px line + 8px margin */
   padding-top: 20px;
-  flex: none;
+  min-width: 0;
 }
 
 .gitmap-weekdays span {
@@ -5789,6 +5793,7 @@ html {
 /* The grid scrolls inside its own block — the page never scrolls
    sideways because of it. */
 .gitmap-scroll {
+  min-width: 0;
   overflow-x: auto;
   overflow-y: hidden;
   max-width: 100%;
